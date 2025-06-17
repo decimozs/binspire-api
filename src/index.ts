@@ -6,7 +6,7 @@ const app = new Hono();
 app.use(
   "*",
   cors({
-    origin: ["http://localhost:5173", "https://binspire-web.onrender.com/"],
+    origin: ["http://localhost:5173", "https://binspire-web.onrender.com"],
     credentials: true,
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   }),
