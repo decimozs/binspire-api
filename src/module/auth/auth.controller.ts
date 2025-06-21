@@ -1,24 +1,16 @@
 import { factory } from "@/src/util/factory";
 import { zValidator } from "@/src/util/validator";
-import {
-  AuthService,
-  loginSchema,
-  signUpSchema,
-
-} from "./auth.service";
+import { AuthService, loginSchema, signUpSchema } from "./auth.service";
 import type { LoginPayload, SignUpPayload } from "./auth.service";
 import { deleteCookie, setCookie } from "hono/cookie";
 import { successfulResponse } from "@/src/util/response";
-import { getConnInfo } from "hono/bun";
 
 const loginHandler = factory.createHandlers(
   zValidator("json", loginSchema),
   async (c) => {
     const data = c.req.valid("json");
 
-    const info = getConnInfo(c);
-
-    const ipAddress = c.req.header("X-Forwarded-For") || info.remote.address;
+    const ipAddress = c.req.header("X-Forwarded-For");
 
     const userAgent = c.req.header("user-agent");
 
