@@ -4,6 +4,7 @@ import { AuthService, loginSchema, signUpSchema } from "./auth.service";
 import type { LoginPayload, SignUpPayload } from "./auth.service";
 import { deleteCookie, setCookie } from "hono/cookie";
 import { successfulResponse } from "@/src/util/response";
+import env from "@/src/config/env";
 
 const loginHandler = factory.createHandlers(
   zValidator("json", loginSchema),
@@ -25,8 +26,8 @@ const loginHandler = factory.createHandlers(
     setCookie(c, "session_token", session.token, {
       path: "/",
       httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
+      secure: env?.NODE_ENV === "production",
+      sameSite: env?.NODE_ENV === "production" ? "None" : "Lax",
       expires: session.expiresAt,
     });
 
@@ -56,8 +57,8 @@ const signUpHandler = factory.createHandlers(
     setCookie(c, "session_token", session.token, {
       path: "/",
       httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
+      secure: env?.NODE_ENV === "production",
+      sameSite: env?.NODE_ENV === "production" ? "None" : "Lax",
       expires: session.expiresAt,
     });
 
