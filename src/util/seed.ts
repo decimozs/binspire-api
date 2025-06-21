@@ -34,3 +34,5 @@ await db.insert(accountsTable).values({
 });
 
 console.log("✅ Seeded one org, user, and account.");
+console.log("org: ", org);
+console.log("user: ", user);
