@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "NODE_ENV=development bun run --hot src/index.ts",
-    "build": "bun build ./src/index.ts --outdir ./build",
+    "build": "bun build ./src/index.ts --outdir ./build --target bun",
     "start": "NODE_ENV=production bun run ./build/index.js",
     "prepare": "husky",
     "test": "vitest",
