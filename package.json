@@ -10,7 +10,7 @@
     "test": "vitest",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "seed": "bun run ./app/utils/seed",
+    "seed": "bun run ./src/util/seed.ts",
     "db:generate": "bun run drizzle-kit generate",
     "db:migrate": "bun run drizzle-kit migrate",
     "db:push": "bun run drizzle-kit push",
