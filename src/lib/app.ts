@@ -27,6 +27,8 @@ function initApp() {
     "*",
     except(
       [
+        "/",
+        "/checkhealth",
         "/api/v1/auth/login",
         "/api/v1/auth/sign-up",
         "/api/v1/requests-access",
