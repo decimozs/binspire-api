@@ -4,7 +4,6 @@ import { nanoid } from "nanoid";
 import { orgsTable } from "./org.schema";
 import { permissionEnum, roleEnum } from "../enum";
 import { createInsertSchema } from "drizzle-zod";
-import { insertAccountSchema } from "./account.schema";
 import type z from "zod/v4";
 
 export const usersTable = pgTable("users", {

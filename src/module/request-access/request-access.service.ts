@@ -1,7 +1,8 @@
 import {
   requestsAccessTable,
-  type InsertRequestAccess as RequestAccessPayload,
+
 } from "@/src/db";
+import type { InsertRequestAccess as RequestAccessPayload } from "@/src/db";
 import db from "@/src/lib/db";
 import { ConflictError, NotFoundError } from "@/src/util/error";
 import EmailService from "../email/email.service";
@@ -26,10 +27,11 @@ async function createRequestAccess(payload: RequestAccessPayload) {
       where: (table, { eq }) => eq(table.email, email),
     });
 
-    if (requestAccess)
+    if (requestAccess) {
       throw new ConflictError(
         "You have already submitted a request. Please wait for approval.",
       );
+    }
 
     const [insertedRequestAccess] = await tx
       .insert(requestsAccessTable)

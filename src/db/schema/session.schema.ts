@@ -6,7 +6,6 @@ import { orgsTable } from "./org.schema";
 import { permissionEnum, roleEnum } from "../enum";
 import { insertExcludedFields, timestamps } from "../base";
 import { createInsertSchema } from "drizzle-zod";
-import { v4 as uuid } from "uuid";
 
 export const sessionsTable = pgTable(
   "sessions",

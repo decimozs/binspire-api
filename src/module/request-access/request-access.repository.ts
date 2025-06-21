@@ -1,8 +1,8 @@
 import {
   requestsAccessTable,
-  type InsertRequestAccess,
-  type UpdateRequestAccess,
+
 } from "@/src/db";
+import type { InsertRequestAccess, UpdateRequestAccess } from "@/src/db";
 import db from "@/src/lib/db";
 import { eq } from "drizzle-orm";
 

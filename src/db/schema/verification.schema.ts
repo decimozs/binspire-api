@@ -1,7 +1,6 @@
-import { boolean, index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { insertExcludedFields, timestamps } from "../base";
 import { nanoid } from "nanoid";
-import { orgsTable } from "./org.schema";
 import { createInsertSchema } from "drizzle-zod";
 import type { z } from "zod/v4";
 
