@@ -35,7 +35,13 @@ function initApp() {
         "/api/v1/emails",
       ],
       async (c, next) => {
-        const token = getCookie(c, "session_token") as string;
+        const token = getCookie(c, "session_token");
+
+        if (!token) {
+          throw new UnauthorizedError("Missing session token");
+        }
+
+        console.log("Cookie token:", token);
 
         const session = await db.query.sessionsTable.findFirst({
           where: (table, { eq }) => eq(table.token, token),

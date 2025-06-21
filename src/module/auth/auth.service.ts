@@ -187,7 +187,9 @@ async function logout(session: Session) {
 }
 
 async function checkSession(session: Session) {
-  if (!session) throw new UnauthorizedError("Missing session");
+  if (!session || !session.token) {
+    throw new UnauthorizedError("Missing session token");
+  }
 
   const { userId } = session;
 
