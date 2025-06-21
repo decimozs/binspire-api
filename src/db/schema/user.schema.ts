@@ -4,7 +4,8 @@ import { nanoid } from "nanoid";
 import { orgsTable } from "./org.schema";
 import { permissionEnum, roleEnum } from "../enum";
 import { createInsertSchema } from "drizzle-zod";
-import type { z } from "zod/v4";
+import { insertAccountSchema } from "./account.schema";
+import type z from "zod/v4";
 
 export const usersTable = pgTable("users", {
   id: text("id")
@@ -22,7 +23,10 @@ export const usersTable = pgTable("users", {
 });
 
 export const insertUserSchema = createInsertSchema(usersTable)
-  .omit(insertExcludedFields)
+  .omit({
+    ...insertExcludedFields,
+    isOnline: true,
+  })
   .strict();
 
 export const updateUserSchema = insertUserSchema.partial();

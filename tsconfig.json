@@ -5,7 +5,13 @@
       "es2022"
     ],
     "moduleDetection": "force",
+    "baseUrl": ".",
     "module": "preserve",
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    },
     "resolveJsonModule": true,
     "allowJs": true,
     "strict": true,
@@ -15,13 +21,7 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
-    "skipLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
+    "skipLibCheck": true
   },
   "include": [
     "**/*.ts",

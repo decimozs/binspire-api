@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres
+    container_name: binspire_db
+    restart: always
+    env_file:
+      - .env.development
+    environment:
+      POSTGRES_DB: ${DOCKER_POSTGRES_DB}
+      POSTGRES_USER: ${DOCKER_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${DOCKER_POSTGRES_PASSWORD}
+    ports:
+      - "${DOCKER_POSTGRES_PORT}:5432"
+    networks:
+      - backend
+
+networks:
+  backend:

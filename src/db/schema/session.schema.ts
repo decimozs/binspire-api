@@ -6,13 +6,15 @@ import { orgsTable } from "./org.schema";
 import { permissionEnum, roleEnum } from "../enum";
 import { insertExcludedFields, timestamps } from "../base";
 import { createInsertSchema } from "drizzle-zod";
+import { v4 as uuid } from "uuid";
 
 export const sessionsTable = pgTable(
   "sessions",
   {
     id: text("id")
       .$defaultFn(() => nanoid())
-      .primaryKey(),
+      .primaryKey()
+      .notNull(),
     userId: text("user_id")
       .references(() => usersTable.id, { onDelete: "cascade" })
       .notNull(),
@@ -22,7 +24,10 @@ export const sessionsTable = pgTable(
       })
       .notNull(),
     expiresAt: timestamp("expires_at").notNull(),
-    token: text("token").notNull().unique(),
+    token: text("token")
+      .$default(() => nanoid())
+      .notNull()
+      .unique(),
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
     role: roleEnum().notNull(),
@@ -36,7 +41,10 @@ export const sessionsTable = pgTable(
 );
 
 export const insertSessionSchema = createInsertSchema(sessionsTable)
-  .omit(insertExcludedFields)
+  .omit({
+    ...insertExcludedFields,
+    token: true,
+  })
   .strict();
 
 export const updateSessionSchema = insertUserSchema.partial();

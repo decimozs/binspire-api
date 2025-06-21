@@ -1,4 +1,4 @@
-import { boolean, index, pgTable, text } from "drizzle-orm/pg-core";
+import { index, pgTable, text } from "drizzle-orm/pg-core";
 import { insertExcludedFields, timestamps } from "../base";
 import { nanoid } from "nanoid";
 import { orgsTable } from "./org.schema";
@@ -18,9 +18,9 @@ export const requestsAccessTable = pgTable(
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
     reason: text("reason").notNull(),
-    permission: permissionEnum().notNull(),
+    permission: permissionEnum().notNull().default("viewer"),
     role: roleEnum().notNull(),
-    status: statusEnum().notNull(),
+    status: statusEnum().notNull().default("pending"),
     ...timestamps,
   },
   (table) => {
@@ -31,7 +31,11 @@ export const requestsAccessTable = pgTable(
 );
 
 export const insertRequestAccess = createInsertSchema(requestsAccessTable)
-  .omit(insertExcludedFields)
+  .omit({
+    ...insertExcludedFields,
+    status: true,
+    permission: true,
+  })
   .strict();
 
 export const updateRequestAccess = insertRequestAccess.partial();
