@@ -1,7 +1,4 @@
-import {
-  requestsAccessTable,
-
-} from "@/src/db";
+import { requestsAccessTable } from "@/src/db";
 import type { InsertRequestAccess as RequestAccessPayload } from "@/src/db";
 import db from "@/src/lib/db";
 import { ConflictError, NotFoundError } from "@/src/util/error";
