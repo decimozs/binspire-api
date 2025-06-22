@@ -9,7 +9,7 @@ const sendEmailHandler = factory.createHandlers(
     const payload = c.req.valid("json");
     const data = await EmailService.sendEmail(payload);
 
-    return successfulResponse(c, "Email sent.", data);
+    return successfulResponse(c, "Email verification sent successfully.", data);
   },
 );
 

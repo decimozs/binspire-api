@@ -39,21 +39,8 @@ async function createRequestAccess(payload: RequestAccessPayload) {
       throw new Error("Failed to create request access");
 
     const emailMessage = await EmailService.sendEmail({
-      to: email,
-      subject: "Request Access Received – We'll Get Back to You Soon",
-      text: "We've received your access request. Our team will review it and contact you shortly.",
-      html: `
-    <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
-      <h2 style="color: #4CAF50;">Access Request Received</h2>
-      <p>Hi there,</p>
-      <p>Thank you for requesting access. We’ve received your request and our team will review it shortly.</p>
-      <p>If your request is approved, you’ll receive a confirmation email with further instructions.</p>
-      <p>We appreciate your patience!</p>
-      <br />
-      <p>Best regards,</p>
-      <p><strong>Binspire Team</strong></p>
-    </div>
-  `,
+      email,
+      type: "request-access",
     });
 
     return emailMessage;
