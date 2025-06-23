@@ -10,6 +10,7 @@ import { UnauthorizedError } from "../util/error";
 import { except } from "hono/combine";
 import requestAccessRoute from "../module/request-access/request-access.route";
 import emailRoute from "../module/email/email.route";
+import verificationRoute from "../module/verification/verification.route";
 
 function initApp() {
   const app = new Hono<AppBindings>({ strict: false });
@@ -29,6 +30,7 @@ function initApp() {
       [
         "/",
         "/checkhealth",
+        "/api/v1/verifications/*",
         "/api/v1/auth/login",
         "/api/v1/auth/sign-up",
         "/api/v1/requests-access",
@@ -81,7 +83,12 @@ function initApp() {
 
 const app = initApp();
 
-const routes = [authRoute, requestAccessRoute, emailRoute] as const;
+const routes = [
+  authRoute,
+  requestAccessRoute,
+  emailRoute,
+  verificationRoute,
+] as const;
 
 routes.forEach((route) => {
   app.route("/api/v1", route);
