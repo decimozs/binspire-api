@@ -1,6 +1,8 @@
 import transporter from "@/src/lib/email";
 import { verificationTypeValues } from "@/src/util/constant";
 import { z } from "zod/v4";
+import { VerificationRepository } from "../verification/verification.repository";
+import { expiresAtTime } from "@/src/util/time";
 
 export const emailSchema = z.object({
   email: z.email({ message: "Invalid email" }),
@@ -11,6 +13,16 @@ export type EmailPayload = z.infer<typeof emailSchema>;
 
 async function sendEmail(payload: EmailPayload) {
   const { email, type } = payload;
+  const expiresAt = expiresAtTime;
+
+  const [insertedVerification] = await VerificationRepository.insert({
+    identifier: type,
+    expiresAt,
+  });
+
+  if (!insertedVerification) throw new Error("Failed to insert verification");
+
+  const verification = insertedVerification;
 
   let subject = "";
   let text = "";
@@ -37,7 +49,7 @@ async function sendEmail(payload: EmailPayload) {
       subject = "Reset Your Password";
       text = "You requested a password reset. Click the link below to proceed.";
       html = `<p>You requested a password reset. Click the link below to reset your password:</p>
-              <a href="https://yourdomain.com/reset-password?email=${encodeURIComponent(email)}">Reset Password</a>`;
+              <a href="https://binspire-web.onrender.com/auth/reset-password?t=${verification.value}">Reset Password</a>`;
       break;
     }
 
