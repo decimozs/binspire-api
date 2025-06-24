@@ -3,8 +3,6 @@ import argon2 from "argon2";
 import { resetDB } from "./reset";
 import { accountsTable, orgsTable, usersTable } from "../db";
 
-resetDB();
-
 const [org] = await db
   .insert(orgsTable)
   .values({
