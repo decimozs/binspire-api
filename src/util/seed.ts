@@ -1,6 +1,22 @@
 import db from "../lib/db";
-import { accountsTable, orgsTable, usersTable } from "../db";
+import {
+  accountsTable,
+  orgsTable,
+  requestsAccessTable,
+  sessionsTable,
+  usersTable,
+  verificationsTable,
+} from "../db";
 import argon2 from "argon2";
+
+await db.delete(verificationsTable);
+await db.delete(sessionsTable);
+await db.delete(requestsAccessTable);
+await db.delete(accountsTable);
+await db.delete(usersTable);
+await db.delete(orgsTable);
+
+console.log("✅ Database tables deleted");
 
 const [org] = await db
   .insert(orgsTable)
