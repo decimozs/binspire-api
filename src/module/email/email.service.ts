@@ -21,7 +21,7 @@ async function sendEmail(payload: EmailPayload) {
     where: (table, { eq }) => eq(table.email, email),
   });
 
-  if (!user) {
+  if (!user && type !== "request-access") {
     throw new NotFoundError(
       "User not found with this email. Please create account first.",
     );
