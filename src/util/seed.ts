@@ -1,6 +1,5 @@
 import db from "../lib/db";
 import argon2 from "argon2";
-import { resetDB } from "./reset";
 import { accountsTable, orgsTable, usersTable } from "../db";
 
 const [org] = await db
