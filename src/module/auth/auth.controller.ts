@@ -7,7 +7,7 @@ import {
   signUpSchema,
 } from "./auth.service";
 import type { LoginPayload, SignUpPayload } from "./auth.service";
-import { deleteCookie, setCookie } from "hono/cookie";
+import { setCookie } from "hono/cookie";
 import { successfulResponse } from "@/src/util/response";
 import env from "@/src/config/env";
 
@@ -67,6 +67,8 @@ const signUpHandler = factory.createHandlers(
       expires: session.expiresAt,
     });
 
+    c.set("session", session);
+
     return successfulResponse(c, "Sign up successful", user);
   },
 );
@@ -76,7 +78,13 @@ const logoutHandler = factory.createHandlers(async (c) => {
 
   const { token } = await AuthService.logout(session);
 
-  deleteCookie(c, "session_token");
+  setCookie(c, "session_token", "", {
+    path: "/",
+    httpOnly: true,
+    secure: env?.NODE_ENV === "production",
+    sameSite: env?.NODE_ENV === "production" ? "None" : "Lax",
+    maxAge: 0,
+  });
 
   return successfulResponse(c, "User logout", token);
 });

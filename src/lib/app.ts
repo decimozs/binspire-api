@@ -25,6 +25,7 @@ function initApp() {
   );
 
   app.use("*", except(["/", "/checkhealth"], orgMiddleware));
+
   app.use("*", except(unAuthenticatedRoutes, sessionMiddleware));
 
   app.use(logging());
