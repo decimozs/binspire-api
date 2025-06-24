@@ -7,9 +7,12 @@ const sendEmailHandler = factory.createHandlers(
   zValidator("json", emailSchema),
   async (c) => {
     const payload = c.req.valid("json");
-    const data = await EmailService.sendEmail(payload);
+    const { info, verification } = await EmailService.sendEmail(payload);
 
-    return successfulResponse(c, "Email verification sent successfully.", data);
+    return successfulResponse(c, "Email verification sent successfully.", {
+      verification,
+      info,
+    });
   },
 );
 

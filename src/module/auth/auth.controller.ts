@@ -1,6 +1,11 @@
 import { factory } from "@/src/util/factory";
 import { zValidator } from "@/src/util/validator";
-import { AuthService, loginSchema, signUpSchema } from "./auth.service";
+import {
+  AuthService,
+  loginSchema,
+  resetPasswordSchema,
+  signUpSchema,
+} from "./auth.service";
 import type { LoginPayload, SignUpPayload } from "./auth.service";
 import { deleteCookie, setCookie } from "hono/cookie";
 import { successfulResponse } from "@/src/util/response";
@@ -84,9 +89,21 @@ const checkSessionHandler = factory.createHandlers(async (c) => {
   return successfulResponse(c, "User is authenticated", user);
 });
 
+const resetPasswordHandler = factory.createHandlers(
+  zValidator("json", resetPasswordSchema),
+  async (c) => {
+    const payload = c.req.valid("json");
+
+    await AuthService.resetPassword(payload);
+
+    return successfulResponse(c, "Successfully reset password");
+  },
+);
+
 export const AuthController = {
   loginHandler,
   signUpHandler,
   logoutHandler,
   checkSessionHandler,
+  resetPasswordHandler,
 };

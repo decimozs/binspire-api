@@ -3,6 +3,9 @@ import { verificationTypeValues } from "@/src/util/constant";
 import { z } from "zod/v4";
 import { VerificationRepository } from "../verification/verification.repository";
 import { expiresAtTime } from "@/src/util/time";
+import { generateHashedToken } from "@/src/util/hashing";
+import db from "@/src/lib/db";
+import { NotFoundError } from "@/src/util/error";
 
 export const emailSchema = z.object({
   email: z.email({ message: "Invalid email" }),
@@ -13,11 +16,25 @@ export type EmailPayload = z.infer<typeof emailSchema>;
 
 async function sendEmail(payload: EmailPayload) {
   const { email, type } = payload;
+
+  const user = await db.query.usersTable.findFirst({
+    where: (table, { eq }) => eq(table.email, email),
+  });
+
+  if (!user) {
+    throw new NotFoundError(
+      "User not found with this email. Please create account first.",
+    );
+  }
+
+  const { raw, hash } = generateHashedToken();
   const expiresAt = expiresAtTime;
 
   const [insertedVerification] = await VerificationRepository.insert({
+    email,
     identifier: type,
     expiresAt,
+    value: hash,
   });
 
   if (!insertedVerification) throw new Error("Failed to insert verification");
@@ -49,7 +66,7 @@ async function sendEmail(payload: EmailPayload) {
       subject = "Reset Your Password";
       text = "You requested a password reset. Click the link below to proceed.";
       html = `<p>You requested a password reset. Click the link below to reset your password:</p>
-              <a href="https://binspire-web.onrender.com/auth/reset-password?t=${verification.value}">Reset Password</a>`;
+              <a href="https://binspire-web.onrender.com/auth/reset-password?token=${raw}">Reset Password</a>`;
       break;
     }
 
@@ -66,7 +83,10 @@ async function sendEmail(payload: EmailPayload) {
     html,
   });
 
-  return info;
+  return {
+    verification,
+    info,
+  };
 }
 
 const EmailService = {

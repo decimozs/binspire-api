@@ -3,6 +3,6 @@ import VerificationController from "./verification.controller";
 
 const verificationRoute = factory
   .createApp()
-  .get("/verifications/:id", ...VerificationController.getByIdHandler);
+  .get("/verifications/:token", ...VerificationController.getByTokenHandler);
 
 export default verificationRoute;

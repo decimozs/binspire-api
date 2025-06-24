@@ -3,16 +3,19 @@ import type { HTTPResponseError } from "hono/types";
 import { BadRequestError } from "./error";
 import { ZodError } from "zod";
 
-export function successfulResponse<T>(c: Context, message: string, data: T) {
+export function successfulResponse<T>(
+  c: Context,
+  message: string,
+  payload?: T,
+) {
   return c.json({
     status: true,
     message,
-    data,
+    payload,
   });
 }
 
 export function errorResponse(c: Context, err: Error | HTTPResponseError) {
-  console.log(err);
   const status =
     typeof (err as any)?.status === "number" ? (err as any).status : 500;
 

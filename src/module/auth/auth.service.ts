@@ -202,9 +202,53 @@ async function checkSession(session: Session) {
   return { user };
 }
 
+export const resetPasswordSchema = z
+  .object({
+    email: z
+      .email({ message: "Please enter a valid email address" })
+      .min(1, { message: "Email is required" }),
+    password: z
+      .string()
+      .min(8, { message: "Password must be at least 8 characters long" })
+      .regex(/\d/, { message: "Password must contain at least 1 number" })
+      .regex(/[a-z]/, {
+        message: "Password must contain at least 1 lowercase letter",
+      })
+      .regex(/[A-Z]/, {
+        message: "Password must contain at least 1 uppercase letter",
+      }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+export type ResetPasswordPayload = z.infer<typeof resetPasswordSchema>;
+
+async function resetPassword(payload: ResetPasswordPayload) {
+  const { email, password } = payload;
+
+  const user = await db.query.usersTable.findFirst({
+    where: (table, { eq }) => eq(table.email, email),
+  });
+
+  if (!user) throw new NotFoundError("User not found");
+
+  const hashPassword = await argon2.hash(password);
+
+  const [updatedAccount] = await AccountRepository.update({
+    userId: user.id,
+    password: hashPassword,
+  });
+
+  if (!updatedAccount) throw new Error("Failed to update account");
+}
+
 export const AuthService = {
   login,
   signUp,
   logout,
   checkSession,
+  resetPassword,
 };

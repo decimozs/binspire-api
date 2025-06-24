@@ -4,13 +4,13 @@ import type { AppBindings } from "./types";
 import authRoute from "../module/auth/auth.route";
 import { errorResponse } from "../util/response";
 import { logging } from "./logging";
-import { getCookie } from "hono/cookie";
-import db from "./db";
-import { UnauthorizedError } from "../util/error";
 import { except } from "hono/combine";
 import requestAccessRoute from "../module/request-access/request-access.route";
 import emailRoute from "../module/email/email.route";
 import verificationRoute from "../module/verification/verification.route";
+import sessionMiddleware from "../module/session/session.middleware";
+import { unAuthenticatedRoutes } from "../util/constant";
+import orgMiddleware from "../module/org/org.middleware";
 
 function initApp() {
   const app = new Hono<AppBindings>({ strict: false });
@@ -24,39 +24,8 @@ function initApp() {
     }),
   );
 
-  app.use(
-    "*",
-    except(
-      [
-        "/",
-        "/checkhealth",
-        "/api/v1/verifications/*",
-        "/api/v1/auth/login",
-        "/api/v1/auth/sign-up",
-        "/api/v1/requests-access",
-        "/api/v1/emails",
-      ],
-      async (c, next) => {
-        const token = getCookie(c, "session_token");
-
-        if (!token) {
-          throw new UnauthorizedError("Missing session token");
-        }
-
-        console.log("Cookie token:", token);
-
-        const session = await db.query.sessionsTable.findFirst({
-          where: (table, { eq }) => eq(table.token, token),
-        });
-
-        if (!session) throw new UnauthorizedError("Invalid token");
-
-        c.set("session", session);
-
-        await next();
-      },
-    ),
-  );
+  app.use("*", orgMiddleware);
+  app.use("*", except(unAuthenticatedRoutes, sessionMiddleware));
 
   app.use(logging());
 

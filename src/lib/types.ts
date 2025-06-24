@@ -5,5 +5,6 @@ export interface AppBindings {
   Variables: {
     session: Session;
     db: Database;
+    orgId: string;
   };
 }

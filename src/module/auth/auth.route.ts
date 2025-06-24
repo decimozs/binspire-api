@@ -6,6 +6,7 @@ const authRoute = factory
   .get("/auth/session", ...AuthController.checkSessionHandler)
   .get("/auth/logout", ...AuthController.logoutHandler)
   .post("/auth/login", ...AuthController.loginHandler)
-  .post("/auth/sign-up", ...AuthController.signUpHandler);
+  .post("/auth/sign-up", ...AuthController.signUpHandler)
+  .post("/auth/reset-password", ...AuthController.resetPasswordHandler);
 
 export default authRoute;

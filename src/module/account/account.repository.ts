@@ -1,7 +1,4 @@
-import {
-  accountsTable,
-
-} from "@/src/db";
+import { accountsTable } from "@/src/db";
 import type { InsertAccount, UpdateAccount } from "@/src/db";
 import db from "@/src/lib/db";
 import { eq } from "drizzle-orm";

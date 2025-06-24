@@ -1,7 +1,4 @@
-import {
-  verificationsTable,
-
-} from "@/src/db";
+import { verificationsTable } from "@/src/db";
 import type { InsertVerification, UpdateVerification } from "@/src/db";
 import db from "@/src/lib/db";
 import { eq } from "drizzle-orm";
@@ -13,6 +10,12 @@ async function findAll() {
 async function findById(id: string) {
   return await db.query.verificationsTable.findFirst({
     where: (table, { eq }) => eq(table.id, id),
+  });
+}
+
+async function findByToken(token: string) {
+  return await db.query.verificationsTable.findFirst({
+    where: (table, { eq }) => eq(table.value, token),
   });
 }
 
@@ -34,6 +37,7 @@ async function remove(id: string) {
 export const VerificationRepository = {
   findAll,
   findById,
+  findByToken,
   insert,
   update,
   remove,

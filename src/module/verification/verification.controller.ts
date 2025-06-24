@@ -8,6 +8,10 @@ export const IdParamSchema = z.object({
   id: z.string().min(1),
 });
 
+export const TokenParamSchema = z.object({
+  token: z.string().min(1),
+});
+
 const getByIdHandler = factory.createHandlers(
   zValidator("param", IdParamSchema),
   async (c) => {
@@ -17,8 +21,18 @@ const getByIdHandler = factory.createHandlers(
   },
 );
 
+const getByTokenHandler = factory.createHandlers(
+  zValidator("param", TokenParamSchema),
+  async (c) => {
+    const { token } = c.req.valid("param");
+    const data = await VerificationService.getByToken(token);
+    return successfulResponse(c, "Verification validated successfully", data);
+  },
+);
+
 const VerificationController = {
   getByIdHandler,
+  getByTokenHandler,
 };
 
 export default VerificationController;

@@ -3,7 +3,6 @@ import { insertExcludedFields, timestamps } from "../base";
 import { nanoid } from "nanoid";
 import { createInsertSchema } from "drizzle-zod";
 import type { z } from "zod/v4";
-import { v4 as uuidv4 } from "uuid";
 import { identifierEnum } from "../enum";
 
 export const verificationsTable = pgTable(
@@ -13,9 +12,8 @@ export const verificationsTable = pgTable(
       .$defaultFn(() => nanoid())
       .primaryKey(),
     identifier: identifierEnum().notNull(),
-    value: text("value")
-      .$defaultFn(() => uuidv4())
-      .notNull(),
+    email: text("email").notNull(),
+    value: text("value").notNull(),
     expiresAt: timestamp("expires_at")
       .$defaultFn(() => new Date(Date.now() + 10 * 60 * 1000))
       .notNull(),
@@ -27,10 +25,7 @@ export const verificationsTable = pgTable(
 );
 
 export const insertVerificationSchema = createInsertSchema(verificationsTable)
-  .omit({
-    ...insertExcludedFields,
-    value: true,
-  })
+  .omit(insertExcludedFields)
   .strict();
 
 export const updateVerificationSchema = insertVerificationSchema.partial();
