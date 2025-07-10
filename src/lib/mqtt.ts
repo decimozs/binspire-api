@@ -4,7 +4,7 @@ import env from "../config/env";
 import { logger } from "./logging";
 import fs from "node:fs";
 
-const caFile = fs.readFileSync("../../hivemq-ca.crt");
+const caFile = fs.readFileSync("../certs/hivemq-ca.crt");
 
 interface MQTTCredentials {
   host?: string;
