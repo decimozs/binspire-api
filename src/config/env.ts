@@ -3,16 +3,20 @@ import { config } from "dotenv";
 import { z } from "zod";
 
 if (process.env.NODE_ENV === "development") {
-  config({ path: ".env.development" });
+  config({ path: ".env" });
 } else {
   config({ path: ".env.production" });
 }
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "testing", "production"]),
+  HIVEMQ_CLUSTER_URL: z.string(),
+  HIVEMQ_PORT: z.string(),
+  HIVEMQ_WS_PORT: z.string(),
+  HIVEMQ_USERNAME: z.string(),
+  HIVEMQ_PASSWORD: z.string(),
   RENDER_HOSTNAME: z.string(),
   DATABASE_URL: z.string(),
-  EXTERNAL_DB_URL: z.string(),
   DB_NAME: z.string(),
   DB_PORT: z.string(),
   DB_USERNAME: z.string(),

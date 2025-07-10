@@ -11,6 +11,12 @@ import verificationRoute from "../module/verification/verification.route";
 import sessionMiddleware from "../module/session/session.middleware";
 import { unAuthenticatedRoutes } from "../util/constant";
 import orgMiddleware from "../module/org/org.middleware";
+import userRoute from "../module/user/user.route";
+import trashbinRoute from "../module/trashbin/trashbin.route";
+import collectionRoute from "../module/collection/collection.route";
+import issueRoute from "../module/issue/issue.route";
+import activityRoute from "../module/actvity/activity.route";
+import historyRoute from "../module/history/history.route";
 
 function initApp() {
   const app = new Hono<AppBindings>({ strict: false });
@@ -20,7 +26,7 @@ function initApp() {
     cors({
       origin: ["http://localhost:5173", "https://binspire-web.onrender.com"],
       credentials: true,
-      allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     }),
   );
 
@@ -58,6 +64,12 @@ const routes = [
   requestAccessRoute,
   emailRoute,
   verificationRoute,
+  userRoute,
+  trashbinRoute,
+  collectionRoute,
+  issueRoute,
+  activityRoute,
+  historyRoute,
 ] as const;
 
 routes.forEach((route) => {

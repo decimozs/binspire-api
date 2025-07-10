@@ -92,9 +92,9 @@ const logoutHandler = factory.createHandlers(async (c) => {
 const checkSessionHandler = factory.createHandlers(async (c) => {
   const session = c.get("session");
 
-  const { user } = await AuthService.checkSession(session);
+  const data = await AuthService.checkSession(session);
 
-  return successfulResponse(c, "User is authenticated", user);
+  return successfulResponse(c, "User is authenticated", data);
 });
 
 const resetPasswordHandler = factory.createHandlers(

@@ -30,16 +30,14 @@ export const requestsAccessTable = pgTable(
   },
 );
 
-export const insertRequestAccess = createInsertSchema(requestsAccessTable)
+export const insertRequestAccessSchema = createInsertSchema(requestsAccessTable)
   .omit({
     ...insertExcludedFields,
-    status: true,
-    permission: true,
   })
   .strict();
 
-export const updateRequestAccess = insertRequestAccess.partial();
+export const updateRequestAccessSchema = insertRequestAccessSchema.partial();
 
 export type RequestAccess = typeof requestsAccessTable.$inferSelect;
-export type InsertRequestAccess = z.infer<typeof insertRequestAccess>;
-export type UpdateRequestAccess = z.infer<typeof updateRequestAccess>;
+export type InsertRequestAccess = z.infer<typeof insertRequestAccessSchema>;
+export type UpdateRequestAccess = z.infer<typeof updateRequestAccessSchema>;

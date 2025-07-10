@@ -1,0 +1,1 @@
+ALTER TABLE "trashbins" ADD COLUMN "is_collected" boolean DEFAULT false NOT NULL;

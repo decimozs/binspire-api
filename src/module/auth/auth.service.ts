@@ -14,6 +14,7 @@ import { z } from "zod/v4";
 import { UserRepository } from "../user/user.repository";
 import { AccountRepository } from "../account/account.repository";
 import { permissionValues, roleValues } from "@/src/util/constant";
+import HistoryService from "../history/history.service";
 
 export const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email format" }),
@@ -63,10 +64,28 @@ export async function login(payload: LoginPayload) {
 
   if (!session) throw new Error("Failed to create session");
 
-  await db
+  const [updateUserOnlineStatus] = await db
     .update(usersTable)
     .set({ isOnline: true })
-    .where(eq(usersTable.id, userId));
+    .where(eq(usersTable.id, userId))
+    .returning();
+
+  if (!updateUserOnlineStatus) {
+    throw new Error("Failed to update user online status");
+  }
+
+  const insertHistory = await HistoryService.create({
+    orgId,
+    actorId: userId,
+    action: "login",
+    description: `User ${user.name} logged in`,
+    entity: "auth",
+    isArchive: false,
+  });
+
+  if (!insertHistory) {
+    throw new Error("Failed to insert login history");
+  }
 
   return {
     session,
@@ -152,10 +171,27 @@ export async function signUp(payload: SignUpPayload) {
 
     if (!session) throw new Error("Failed to create session");
 
-    await db
+    const updateUserOnlineStatus = await db
       .update(usersTable)
       .set({ isOnline: true })
-      .where(eq(usersTable.id, userId));
+      .where(eq(usersTable.id, userId))
+      .returning();
+
+    if (!updateUserOnlineStatus)
+      throw new Error("Failed to update user online status");
+
+    const insertHistory = await HistoryService.create({
+      orgId,
+      actorId: userId,
+      action: "signup",
+      description: `User ${userData.name} signed up`,
+      entity: "auth",
+      isArchive: false,
+    });
+
+    if (!insertHistory) {
+      throw new Error("Failed to insert signup activity");
+    }
 
     return {
       session,
@@ -181,6 +217,31 @@ async function logout(session: Session) {
 
   if (!deleteSession) throw new Error("Faild to delete session");
 
+  const [updateUserOnlineStatus] = await db
+    .update(usersTable)
+    .set({ isOnline: false })
+    .where(eq(usersTable.id, deleteSession.userId))
+    .returning();
+
+  if (!updateUserOnlineStatus) {
+    throw new Error("Failed to update user online status");
+  }
+
+  const username = updateUserOnlineStatus.name;
+
+  const insertHistory = await HistoryService.create({
+    orgId: deleteSession.orgId,
+    actorId: deleteSession.userId,
+    action: "logout",
+    description: `User ${username} logged out`,
+    entity: "auth",
+    isArchive: false,
+  });
+
+  if (!insertHistory) {
+    throw new Error("Failed to insert logout activity");
+  }
+
   return {
     ...deleteSession,
   };
@@ -191,7 +252,7 @@ async function checkSession(session: Session) {
     throw new UnauthorizedError("Missing session token");
   }
 
-  const { userId } = session;
+  const { userId, orgId, role, permission } = session;
 
   if (!userId) throw new UnauthorizedError("Not authenticated");
 
@@ -199,7 +260,14 @@ async function checkSession(session: Session) {
 
   if (!user) throw new UnauthorizedError("Invalid session");
 
-  return { user };
+  const validatedSession = {
+    userId,
+    orgId,
+    role,
+    permission,
+  };
+
+  return validatedSession;
 }
 
 export const resetPasswordSchema = z

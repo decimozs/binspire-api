@@ -8,3 +8,8 @@ export interface AppBindings {
     orgId: string;
   };
 }
+
+export interface BatchUpdatePayload<T> {
+  ids: string[];
+  data: T;
+}

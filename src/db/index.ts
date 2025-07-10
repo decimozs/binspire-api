@@ -6,3 +6,8 @@ export * from "./schema/account.schema";
 export * from "./schema/session.schema";
 export * from "./schema/verification.schema";
 export * from "./schema/request-access.schema";
+export * from "./schema/history.schema";
+export * from "./schema/trashbin.schema";
+export * from "./schema/collection.schema";
+export * from "./schema/issue.schema";
+export * from "./schema/activity.schema";

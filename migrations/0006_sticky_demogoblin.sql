@@ -1,0 +1,1 @@
+ALTER TABLE "issues" ADD COLUMN "is_archive" boolean DEFAULT false NOT NULL;

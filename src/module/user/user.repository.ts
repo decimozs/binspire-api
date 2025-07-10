@@ -1,7 +1,7 @@
 import { usersTable } from "@/src/db";
 import type { InsertUser, UpdateUser } from "@/src/db";
 import db from "@/src/lib/db";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 async function findAll() {
   return await db.query.usersTable.findMany();
@@ -17,12 +17,31 @@ async function insert(data: InsertUser) {
   return await db.insert(usersTable).values(data).returning();
 }
 
-async function update(data: UpdateUser) {
-  return await db.update(usersTable).set(data).returning();
+async function update(id: string, data: UpdateUser) {
+  return await db
+    .update(usersTable)
+    .set(data)
+    .where(eq(usersTable.id, id))
+    .returning();
 }
 
 async function remove(id: string) {
   return await db.delete(usersTable).where(eq(usersTable.id, id)).returning();
+}
+
+async function batchUpdate(ids: string[], data: UpdateUser) {
+  return await db
+    .update(usersTable)
+    .set(data)
+    .where(inArray(usersTable.id, ids))
+    .returning();
+}
+
+async function batchRemove(ids: string[]) {
+  return await db
+    .delete(usersTable)
+    .where(inArray(usersTable.id, ids))
+    .returning();
 }
 
 export const UserRepository = {
@@ -31,4 +50,6 @@ export const UserRepository = {
   insert,
   update,
   remove,
+  batchUpdate,
+  batchRemove,
 };

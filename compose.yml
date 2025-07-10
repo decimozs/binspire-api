@@ -2,15 +2,26 @@ services:
   postgres:
     image: postgres
     container_name: binspire_db
-    restart: always
+    restart: no
     env_file:
-      - .env.development
+      - .env
     environment:
       POSTGRES_DB: ${DOCKER_POSTGRES_DB}
       POSTGRES_USER: ${DOCKER_POSTGRES_USER}
       POSTGRES_PASSWORD: ${DOCKER_POSTGRES_PASSWORD}
     ports:
       - "${DOCKER_POSTGRES_PORT}:5432"
+    networks:
+      - backend
+
+  hivemq:
+    image: hivemq/hivemq4
+    container_name: hivemq_broker
+    restart: no
+    ports:
+      - "${MQTT_PORT}:1883"
+      - "${HIVEMQ_PORT}:8080"
+      - "8000:8000"
     networks:
       - backend
 

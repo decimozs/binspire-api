@@ -18,6 +18,7 @@ export const usersTable = pgTable("users", {
   permission: permissionEnum().notNull(),
   role: roleEnum().notNull(),
   isOnline: boolean("is_online").notNull().default(false),
+  isArchive: boolean("is_archive").notNull().default(false),
   ...timestamps,
 });
 

@@ -1,0 +1,1 @@
+ALTER TABLE "history" ADD COLUMN "reference_id" text NOT NULL;

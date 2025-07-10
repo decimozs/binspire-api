@@ -8,7 +8,7 @@ export default antfu({
     quotes: "double",
     semi: true,
   },
-  ignores: ["**/migrations/*"],
+  ignores: ["**/migrations/*", "./src/util/seed.ts"],
   rules: {
     "no-console": ["warn"],
     "node/no-process-env": ["error"],
