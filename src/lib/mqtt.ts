@@ -3,8 +3,12 @@ import type { IClientOptions, MqttProtocol } from "mqtt";
 import env from "../config/env";
 import { logger } from "./logging";
 import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const caFile = fs.readFileSync("../certs/hivemq-ca.crt");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const caFile = fs.readFileSync(path.join(__dirname, "../certs/ca.crt"));
 
 interface MQTTCredentials {
   host?: string;
