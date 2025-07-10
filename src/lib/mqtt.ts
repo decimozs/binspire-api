@@ -4,11 +4,8 @@ import env from "../config/env";
 import { logger } from "./logging";
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const caFile = fs.readFileSync(path.join(__dirname, "../certs/ca.crt"));
+const caFile = fs.readFileSync(path.join(process.cwd(), "certs/ca.crt"));
 
 interface MQTTCredentials {
   host?: string;
