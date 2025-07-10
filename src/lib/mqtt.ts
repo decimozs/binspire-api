@@ -2,6 +2,9 @@ import mqtt from "mqtt";
 import type { IClientOptions, MqttProtocol } from "mqtt";
 import env from "../config/env";
 import { logger } from "./logging";
+import fs from "node:fs";
+
+const caFile = fs.readFileSync("./certs/hivemq-ca.crt");
 
 interface MQTTCredentials {
   host?: string;
@@ -27,6 +30,8 @@ function initMQTT(
     password: credentials.password,
     reconnectPeriod: 1000,
     protocol: credentials.protocol,
+    ca: caFile,
+    rejectUnauthorized: true,
   };
 
   const mqttClient = mqtt.connect(url, options);
