@@ -17,6 +17,7 @@ import collectionRoute from "../module/collection/collection.route";
 import issueRoute from "../module/issue/issue.route";
 import activityRoute from "../module/actvity/activity.route";
 import historyRoute from "../module/history/history.route";
+import taskRoute from "../module/task/task.route";
 
 function initApp() {
   const app = new Hono<AppBindings>({ strict: false });
@@ -70,6 +71,7 @@ const routes = [
   issueRoute,
   activityRoute,
   historyRoute,
+  taskRoute,
 ] as const;
 
 routes.forEach((route) => {

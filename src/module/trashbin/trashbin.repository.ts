@@ -1,7 +1,4 @@
-import {
-  trashbinsTable,
-
-} from "@/src/db";
+import { trashbinsTable } from "@/src/db";
 import type { InsertTrashbin, UpdateTrashbin } from "@/src/db";
 import db from "@/src/lib/db";
 import { eq, inArray } from "drizzle-orm";

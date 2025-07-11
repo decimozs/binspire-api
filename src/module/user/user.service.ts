@@ -2,7 +2,7 @@ import type { InsertUser, UpdateUser } from "@/src/db";
 import { UserRepository } from "./user.repository";
 import { NotFoundError } from "@/src/util/error";
 import type { BatchUpdatePayload } from "@/src/lib/types";
-import HistoryService from "../history/history.service";
+import ActivityService from "../actvity/activity.service";
 
 async function getAll() {
   return await UserRepository.findAll();
@@ -36,7 +36,7 @@ async function update(
 
   if (!updateUser) throw new Error("Failed to update user");
 
-  const insertedHistory = await HistoryService.create({
+  const insertedHistory = await ActivityService.create({
     orgId,
     actorId: userId,
     entity: "user",
@@ -68,7 +68,7 @@ async function remove(id: string, orgId: string, userId: string) {
 
   if (!deletedUser) throw new Error("Failed to delete user");
 
-  const insertedHistory = await HistoryService.create({
+  const insertedHistory = await ActivityService.create({
     orgId,
     actorId: userId,
     entity: "user",

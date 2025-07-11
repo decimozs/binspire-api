@@ -1,2 +1,4 @@
 bun lint:fix
+bun run build
 bun test
+

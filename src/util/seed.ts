@@ -8,9 +8,9 @@ import {
   issuesTable,
   orgsTable,
   requestsAccessTable,
+  tasksTable,
   trashbinsTable,
   usersTable,
-
 } from "../db";
 import type { InsertRequestAccess } from "../db";
 import { faker } from "@faker-js/faker";
@@ -290,11 +290,41 @@ async function seedHistory() {
   console.log("✅ Seeded 100 History logs using real user IDs");
 }
 
+async function seedTask() {
+  const users = await db.query.usersTable.findMany();
+  const trashbins = await db.query.trashbinsTable.findMany();
+  const issues = await db.query.issuesTable.findMany();
+
+  const userIds = users.map((user) => user.id);
+  const trashbinIds = trashbins.map((bin) => bin.id);
+  const issueIds = issues.map((issue) => issue.id);
+  const referenceIds = [...trashbinIds, ...issueIds];
+
+  const tasks = Array.from({ length: 50 }).map(() => {
+    return {
+      orgId: ORG_ID,
+      title: faker.lorem.sentence(),
+      description: faker.lorem.paragraph(),
+      status: faker.helpers.arrayElement(["pending", "in-progress", "done"]),
+      assignedTo: faker.helpers.arrayElement(userIds),
+      priority: faker.helpers.arrayElement(["low", "medium", "high"]),
+      referenceId: faker.helpers.arrayElement(referenceIds),
+      scheduledAt: faker.date.future(),
+      dueAt: faker.date.future(),
+    };
+  });
+
+  await db.insert(tasksTable).values(tasks);
+
+  console.log("✅ Seeded 50 tasks");
+}
+
 // await seedBasedUser();
 // await seedUsers();
 // await seedTrashbins();
-await seedIssues();
-await seedCollections();
-await seedHistory();
-await seedActivity();
+// await seedIssues();
+// await seedCollections();
+// await seedHistory();
+// await seedActivity();
 // await seedBasedUser();
+await seedTask();

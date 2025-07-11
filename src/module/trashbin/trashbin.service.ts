@@ -1,7 +1,7 @@
 import type { BatchUpdatePayload } from "@/src/lib/types";
 import TrashbinRepository from "./trashbin.repository";
 import type { InsertTrashbin, UpdateTrashbin } from "@/src/db";
-import HistoryService from "../history/history.service";
+import ActivityService from "../actvity/activity.service";
 
 async function getAll() {
   return await TrashbinRepository.findAll();
@@ -24,7 +24,7 @@ async function create(data: InsertTrashbin, orgId: string, userId: string) {
     throw new Error("Failed to create trashbin");
   }
 
-  const insertedHistory = await HistoryService.create({
+  const insertedHistory = await ActivityService.create({
     orgId,
     actorId: userId,
     entity: "trashbin",
@@ -89,7 +89,7 @@ async function remove(id: string, orgId: string, userId: string) {
     throw new Error("Failed to delete trashbin");
   }
 
-  const insertedHistory = await HistoryService.create({
+  const insertedHistory = await ActivityService.create({
     orgId,
     actorId: userId,
     entity: "trashbin",

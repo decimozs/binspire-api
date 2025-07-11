@@ -1,7 +1,7 @@
 import IssueRepository from "./issue.repository";
 import type { InsertIssue, UpdateIssue } from "@/src/db";
 import type { BatchUpdatePayload } from "@/src/lib/types";
-import HistoryService from "../history/history.service";
+import ActivityService from "../actvity/activity.service";
 
 async function getAll() {
   return await IssueRepository.findAll();
@@ -20,7 +20,7 @@ async function create(data: InsertIssue, orgId: string, userId: string) {
 
   if (!createdIssue) throw new Error("Failed to create issue");
 
-  const insertedHistory = await HistoryService.create({
+  const insertedHistory = await ActivityService.create({
     orgId,
     actorId: userId,
     entity: "issue",
@@ -48,7 +48,7 @@ async function update(
 
   if (!updatedIssue) throw new Error("Failed to update issue");
 
-  const insertedHistory = await HistoryService.create({
+  const insertedHistory = await ActivityService.create({
     orgId,
     actorId: userId,
     entity: "issue",
@@ -79,7 +79,7 @@ async function remove(id: string, orgId: string, userId: string) {
 
   if (!deletedIssue) throw new Error("Failed to delete issue");
 
-  const insertedHistory = await HistoryService.create({
+  const insertedHistory = await ActivityService.create({
     orgId,
     actorId: userId,
     entity: "issue",

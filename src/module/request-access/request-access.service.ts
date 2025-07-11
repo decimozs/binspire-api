@@ -12,7 +12,7 @@ import { generateHashedToken } from "@/src/util/hashing";
 import { expiresAtTime } from "@/src/util/time";
 import { VerificationRepository } from "../verification/verification.repository";
 import type { BatchUpdatePayload } from "@/src/lib/types";
-import HistoryService from "../history/history.service";
+import ActivityService from "../actvity/activity.service";
 
 async function getAll() {
   return await RequestAccessRepository.findAll();
@@ -123,7 +123,7 @@ async function update(
   `,
     });
 
-    const insertedHistory = await HistoryService.create({
+    const insertedHistory = await ActivityService.create({
       orgId,
       actorId: userId,
       entity: "request-access",
@@ -155,7 +155,7 @@ async function update(
       html: `<p>We're sorry to inform you that your <strong>access request has been rejected</strong>. Please contact the administrator if you believe this was a mistake.</p>`,
     });
 
-    const insertedHistory = await HistoryService.create({
+    const insertedHistory = await ActivityService.create({
       orgId,
       actorId: userId,
       entity: "request-access",
@@ -188,7 +188,7 @@ async function remove(id: string, orgId: string, userId: string) {
 
   if (!deletedRequestAccess) throw new Error("Failed to delete request access");
 
-  const insertedHistory = await HistoryService.create({
+  const insertedHistory = await ActivityService.create({
     orgId,
     actorId: userId,
     entity: "request-access",

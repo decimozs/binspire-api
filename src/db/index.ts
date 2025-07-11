@@ -11,3 +11,4 @@ export * from "./schema/trashbin.schema";
 export * from "./schema/collection.schema";
 export * from "./schema/issue.schema";
 export * from "./schema/activity.schema";
+export * from "./schema/task.schema";

@@ -1,7 +1,7 @@
 import type { BatchUpdatePayload } from "@/src/lib/types";
 import CollectionRepository from "./collection.repository";
 import type { InsertCollection, UpdateCollection } from "@/src/db";
-import HistoryService from "../history/history.service";
+import ActivityService from "../actvity/activity.service";
 
 async function getAll() {
   return await CollectionRepository.findAll();
@@ -41,7 +41,7 @@ async function update(
     throw new Error("Failed to update collection");
   }
 
-  const insertedHistory = await HistoryService.create({
+  const insertedHistory = await ActivityService.create({
     orgId,
     actorId: userId,
     entity: "collection",
@@ -75,7 +75,7 @@ async function remove(id: string, orgId: string, userId: string) {
     throw new Error("Failed to delete collection");
   }
 
-  const insertedHistory = await HistoryService.create({
+  const insertedHistory = await ActivityService.create({
     orgId,
     actorId: userId,
     entity: "collection",

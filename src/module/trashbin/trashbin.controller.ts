@@ -1,5 +1,5 @@
 import { factory } from "@/src/util/factory";
-import { zValidator } from "@hono/zod-validator";
+import { zValidator } from "@/src/util/validator";
 import TrashbinService from "./trashbin.service";
 import { successfulResponse } from "@/src/util/response";
 import { IdParamSchema } from "../verification/verification.controller";
