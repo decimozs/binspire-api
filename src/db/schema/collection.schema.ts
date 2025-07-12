@@ -4,6 +4,7 @@ import type z from "zod/v4";
 import { createInsertSchema } from "drizzle-zod";
 import { trashbinsTable } from "./trashbin.schema";
 import { nanoid } from "nanoid";
+import { usersTable } from "./user.schema";
 
 export const collectionsTable = pgTable("collections", {
   id: text("id")
@@ -11,6 +12,11 @@ export const collectionsTable = pgTable("collections", {
     .primaryKey(),
   trashbinId: text("trashbin_id")
     .references(() => trashbinsTable.id, { onDelete: "cascade" })
+    .notNull(),
+  collectedBy: text("collected_by")
+    .references(() => usersTable.id, {
+      onDelete: "cascade",
+    })
     .notNull(),
   weightLevel: numeric("weight_level", { precision: 10, scale: 2 }),
   wasteLevel: integer("waste_level"),

@@ -127,23 +127,43 @@ async function seedIssues() {
     "maintenance",
   ] as const;
 
+  const now = new Date();
+
   const issues = Array.from({ length: 100 }).map(() => {
+    const status = statuses[Math.floor(Math.random() * statuses.length)];
+
+    const createdAt = new Date(
+      now.getTime() - Math.floor(Math.random() * 30 * 24 * 60 * 60 * 1000),
+    );
+
+    const updatedAt =
+      status === "resolved"
+        ? new Date(
+            createdAt.getTime() +
+              Math.floor(Math.random() * 72 + 1) * 60 * 60 * 1000,
+          )
+        : createdAt;
+
     return {
       orgId: ORG_ID,
       reporterId: userIds[Math.floor(Math.random() * userIds.length)],
+      assignedTo:
+        Math.random() < 0.2
+          ? null
+          : userIds[Math.floor(Math.random() * userIds.length)],
       priority: priorities[Math.floor(Math.random() * priorities.length)],
-      status: statuses[Math.floor(Math.random() * statuses.length)],
+      status,
       category: categories[Math.floor(Math.random() * categories.length)],
       title: `Issue: ${Math.random().toString(36).substring(2, 8)}`,
       description: "Auto-generated issue for testing.",
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt,
+      updatedAt,
     };
   });
 
   await db.insert(issuesTable).values(issues);
 
-  console.log("✅ Seeded 100 issues");
+  console.log("✅ Seeded 100 issues with varying resolution times");
 }
 
 async function seedTrashbins() {
@@ -175,8 +195,12 @@ async function seedTrashbins() {
 }
 
 async function seedCollections() {
+  const users = await db.query.usersTable.findMany({
+    where: (table, { eq }) => eq(table.role, "collector"),
+  });
   const trashbins = await db.query.trashbinsTable.findMany();
 
+  const userIds = users.map((user) => user.id);
   const trashbinIds = trashbins.map((bin) => bin.id);
 
   const collections = Array.from({ length: 300 }).map(() => {
@@ -186,6 +210,7 @@ async function seedCollections() {
     return {
       id: nanoid(),
       trashbinId: faker.helpers.arrayElement(trashbinIds),
+      collectedBy: faker.helpers.arrayElement(userIds),
       weightLevel: faker.number.float({ min: 0.1, max: 20 }).toFixed(2),
       wasteLevel,
       batteryLevel,
@@ -322,9 +347,9 @@ async function seedTask() {
 // await seedBasedUser();
 // await seedUsers();
 // await seedTrashbins();
-// await seedIssues();
+await seedIssues();
 // await seedCollections();
 // await seedHistory();
 // await seedActivity();
 // await seedBasedUser();
-await seedTask();
+// await seedTask();

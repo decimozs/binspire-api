@@ -1,0 +1,1 @@
+ALTER TABLE "collections" ALTER COLUMN "collected_by" SET NOT NULL;

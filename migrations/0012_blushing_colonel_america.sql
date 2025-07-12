@@ -1,0 +1,2 @@
+ALTER TABLE "collections" ADD COLUMN "collected_by" text;--> statement-breakpoint
+ALTER TABLE "collections" ADD CONSTRAINT "collections_collected_by_users_id_fk" FOREIGN KEY ("collected_by") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
