@@ -55,7 +55,7 @@ async function update(
     throw new Error("Failed to update trashbin");
   }
 
-  const insertedHistory = await HistoryService.create({
+  const insertedHistory = await ActivityService.create({
     orgId,
     actorId: userId,
     entity: "trashbin",

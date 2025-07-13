@@ -347,9 +347,10 @@ async function seedTask() {
 // await seedBasedUser();
 // await seedUsers();
 // await seedTrashbins();
-await seedIssues();
+// await seedIssues();
 // await seedCollections();
 // await seedHistory();
 // await seedActivity();
 // await seedBasedUser();
 // await seedTask();
+await seedRequestAccess();
