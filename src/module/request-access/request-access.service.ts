@@ -37,46 +37,42 @@ async function getByEmail(email: string) {
 async function create(payload: RequestAccessPayload) {
   const { email, orgId } = payload;
 
-  const result = await db.transaction(async (tx) => {
-    const user = await tx.query.usersTable.findFirst({
-      where: (table, { eq }) => eq(table.email, email),
-    });
-
-    if (user) throw new ConflictError("Email is already use");
-
-    const org = await tx.query.orgsTable.findFirst({
-      where: (table, { eq }) => eq(table.id, orgId),
-    });
-
-    if (!org) throw new NotFoundError("Org not found");
-
-    const requestAccess = await tx.query.requestsAccessTable.findFirst({
-      where: (table, { eq }) => eq(table.email, email),
-    });
-
-    if (requestAccess) {
-      throw new ConflictError(
-        "You have already submitted a request. Please wait for approval.",
-      );
-    }
-
-    const [insertedRequestAccess] = await tx
-      .insert(requestsAccessTable)
-      .values(payload)
-      .returning();
-
-    if (!insertedRequestAccess)
-      throw new Error("Failed to create request access");
-
-    const emailMessage = await EmailService.sendEmail({
-      email,
-      type: "request-access",
-    });
-
-    return emailMessage;
+  const user = await db.query.usersTable.findFirst({
+    where: (table, { eq }) => eq(table.email, email),
   });
 
-  return result;
+  if (user) throw new ConflictError("Email is already use");
+
+  const org = await db.query.orgsTable.findFirst({
+    where: (table, { eq }) => eq(table.id, orgId),
+  });
+
+  if (!org) throw new NotFoundError("Org not found");
+
+  const requestAccess = await db.query.requestsAccessTable.findFirst({
+    where: (table, { eq }) => eq(table.email, email),
+  });
+
+  if (requestAccess) {
+    throw new ConflictError(
+      "You have already submitted a request. Please wait for approval.",
+    );
+  }
+
+  const [insertedRequestAccess] = await db
+    .insert(requestsAccessTable)
+    .values(payload)
+    .returning();
+
+  if (!insertedRequestAccess)
+    throw new Error("Failed to create request access");
+
+  const emailMessage = await EmailService.sendEmail({
+    email,
+    type: "request-access",
+  });
+
+  return emailMessage;
 }
 
 async function update(

@@ -123,88 +123,83 @@ export async function signUp(payload: SignUpPayload) {
 
   const email = userData.email;
 
-  const result = await db.transaction(async (tx) => {
-    const user = await tx.query.usersTable.findFirst({
-      where: (table, { eq }) => eq(table.email, email),
-    });
-
-    if (user) {
-      throw new ConflictError("Email is already use");
-    }
-
-    const org = await db.query.orgsTable.findFirst({
-      where: (table, { eq }) => eq(table.id, userData.orgId),
-    });
-
-    if (!org) throw new NotFoundError("Org not found");
-
-    const [inserUser] = await UserRepository.insert(userData);
-
-    if (!inserUser) {
-      tx.rollback();
-      throw new Error("Failed to insert user");
-    }
-
-    const hashPassword = await argon2.hash(accountData.password);
-
-    const [insertAccount] = await AccountRepository.insert({
-      userId: inserUser.id,
-      password: hashPassword,
-    });
-
-    if (!insertAccount) throw new Error("Failed to insert account");
-
-    const userId = inserUser.id;
-    const orgId = inserUser.orgId;
-    const role = inserUser.role;
-    const permission = inserUser.permission;
-
-    const [session] = await SessionRepository.insert({
-      userId,
-      orgId,
-      expiresAt: expiresAtTime,
-      ipAddress,
-      userAgent,
-      role,
-      permission,
-    });
-
-    if (!session) throw new Error("Failed to create session");
-
-    const updateUserOnlineStatus = await db
-      .update(usersTable)
-      .set({ isOnline: true })
-      .where(eq(usersTable.id, userId))
-      .returning();
-
-    if (!updateUserOnlineStatus)
-      throw new Error("Failed to update user online status");
-
-    const insertHistory = await HistoryService.create({
-      orgId,
-      actorId: userId,
-      action: "signup",
-      description: `User ${userData.name} signed up`,
-      entity: "auth",
-      isArchive: false,
-    });
-
-    if (!insertHistory) {
-      throw new Error("Failed to insert signup activity");
-    }
-
-    return {
-      session,
-      user: {
-        id: userId,
-        email,
-        role,
-        permission,
-      },
-    };
+  const user = await db.query.usersTable.findFirst({
+    where: (table, { eq }) => eq(table.email, email),
   });
 
-  return result;
+  if (user) {
+    throw new ConflictError("Email is already use");
+  }
+
+  const org = await db.query.orgsTable.findFirst({
+    where: (table, { eq }) => eq(table.id, userData.orgId),
+  });
+
+  if (!org) throw new NotFoundError("Org not found");
+
+  const [inserUser] = await UserRepository.insert(userData);
+
+  if (!inserUser) {
+    throw new Error("Failed to insert user");
+  }
+
+  const hashPassword = await argon2.hash(accountData.password);
+
+  const [insertAccount] = await AccountRepository.insert({
+    userId: inserUser.id,
+    password: hashPassword,
+  });
+
+  if (!insertAccount) throw new Error("Failed to insert account");
+
+  const userId = inserUser.id;
+  const orgId = inserUser.orgId;
+  const role = inserUser.role;
+  const permission = inserUser.permission;
+
+  const [session] = await SessionRepository.insert({
+    userId,
+    orgId,
+    expiresAt: expiresAtTime,
+    ipAddress,
+    userAgent,
+    role,
+    permission,
+  });
+
+  if (!session) throw new Error("Failed to create session");
+
+  const updateUserOnlineStatus = await db
+    .update(usersTable)
+    .set({ isOnline: true })
+    .where(eq(usersTable.id, userId))
+    .returning();
+
+  if (!updateUserOnlineStatus)
+    throw new Error("Failed to update user online status");
+
+  const insertHistory = await HistoryService.create({
+    orgId,
+    actorId: userId,
+    action: "signup",
+    description: `User ${userData.name} signed up`,
+    entity: "auth",
+    isArchive: false,
+  });
+
+  if (!insertHistory) {
+    throw new Error("Failed to insert signup activity");
+  }
+
+  return {
+    session,
+    user: {
+      id: userId,
+      email,
+      role,
+      permission,
+    },
+  };
 }
 
 async function logout(session: Session) {
