@@ -119,7 +119,7 @@ async function update(
       html: `
     <p><strong>Congratulations!</strong> Your access request has been approved.</p>
     <p>Please confirm your account by clicking the link below:</p>
-    <p><a href="http://localhost:5173/auth/create-account?token=${raw}">Confirm your account</a></p>
+    <p><a href="https://binspire-web.onrender.com/auth/create-account?token=${raw}">Confirm your account</a></p>
   `,
     });
 
