@@ -25,6 +25,7 @@ const envSchema = z.object({
   GMAIL_HOST: z.string(),
   GMAIL_USER: z.string(),
   GMAIL_PASS: z.string(),
+  ORS_API_KEY: z.string(),
 });
 
 const { data: env, error } = envSchema.safeParse(process.env);

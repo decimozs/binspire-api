@@ -18,6 +18,7 @@ import issueRoute from "../module/issue/issue.route";
 import activityRoute from "../module/actvity/activity.route";
 import historyRoute from "../module/history/history.route";
 import taskRoute from "../module/task/task.route";
+import directionRoute from "../module/direction/direction.route";
 
 function initApp() {
   const app = new Hono<AppBindings>({ strict: false });
@@ -72,6 +73,7 @@ const routes = [
   activityRoute,
   historyRoute,
   taskRoute,
+  directionRoute,
 ] as const;
 
 routes.forEach((route) => {
