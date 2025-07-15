@@ -15,6 +15,11 @@ import { UserRepository } from "../user/user.repository";
 import { AccountRepository } from "../account/account.repository";
 import { permissionValues, roleValues } from "@/src/util/constant";
 import HistoryService from "../history/history.service";
+import {
+  broadcastToAdmins,
+  broadcastToCollectors,
+  websocket,
+} from "@/src/lib/websocket";
 
 export const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email format" }),
@@ -93,6 +98,7 @@ export async function login(payload: LoginPayload) {
       id: userId,
       email,
       role,
+      name: user.name,
       permission,
     },
   };
@@ -235,6 +241,22 @@ async function logout(session: Session) {
 
   if (!insertHistory) {
     throw new Error("Failed to insert logout activity");
+  }
+
+  if (deleteSession.role === "admin") {
+    broadcastToAdmins({
+      type: "admin_logout",
+      userId: deleteSession.userId,
+      orgId: deleteSession.orgId,
+    });
+  }
+
+  if (deleteSession.role === "collector") {
+    broadcastToCollectors({
+      type: "collector_logout",
+      userId: deleteSession.userId,
+      orgId: deleteSession.orgId,
+    });
   }
 
   return {

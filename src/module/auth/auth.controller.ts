@@ -10,6 +10,7 @@ import type { LoginPayload, SignUpPayload } from "./auth.service";
 import { setCookie } from "hono/cookie";
 import { successfulResponse } from "@/src/util/response";
 import env from "@/src/config/env";
+import { broadcastToAdmins, broadcastToCollectors } from "@/src/lib/websocket";
 
 const loginHandler = factory.createHandlers(
   zValidator("json", loginSchema),
@@ -37,6 +38,24 @@ const loginHandler = factory.createHandlers(
     });
 
     c.set("session", session);
+
+    if (user.role === "admin") {
+      broadcastToAdmins({
+        type: "admin_login",
+        userId: user.id,
+        orgId: session.orgId,
+        name: user.name,
+      });
+    }
+
+    if (user.role === "collector") {
+      broadcastToCollectors({
+        type: "collector_login",
+        userId: user.id,
+        orgId: session.orgId,
+        name: user.name,
+      });
+    }
 
     return successfulResponse(c, "Login successful", user);
   },

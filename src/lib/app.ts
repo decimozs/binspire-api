@@ -19,6 +19,7 @@ import activityRoute from "../module/actvity/activity.route";
 import historyRoute from "../module/history/history.route";
 import taskRoute from "../module/task/task.route";
 import directionRoute from "../module/direction/direction.route";
+import { adminWsRoute, collectorWsRoute } from "./websocket";
 
 function initApp() {
   const app = new Hono<AppBindings>({ strict: false });
@@ -32,9 +33,27 @@ function initApp() {
     }),
   );
 
-  app.use("*", except(["/", "/checkhealth"], orgMiddleware));
+  app.use(
+    "*",
+    except(
+      ["/", "/checkhealth", "/api/v1/ws/admin", "/api/v1/ws/collector"],
+      orgMiddleware,
+    ),
+  );
 
-  app.use("*", except(unAuthenticatedRoutes, sessionMiddleware));
+  app.use(
+    "*",
+    except(
+      [
+        "/",
+        "/checkhealth",
+        "/api/v1/ws/admin",
+        "/api/v1/ws/collector",
+        ...unAuthenticatedRoutes,
+      ],
+      sessionMiddleware,
+    ),
+  );
 
   app.use(logging());
 
@@ -74,6 +93,8 @@ const routes = [
   historyRoute,
   taskRoute,
   directionRoute,
+  adminWsRoute,
+  collectorWsRoute,
 ] as const;
 
 routes.forEach((route) => {
