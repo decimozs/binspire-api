@@ -67,10 +67,10 @@ const broadcastToCollectors = (message: object) => {
 };
 
 export {
-  upgradeWebSocket,
-  websocket,
   adminWsRoute,
-  collectorWsRoute,
   broadcastToAdmins,
   broadcastToCollectors,
+  collectorWsRoute,
+  upgradeWebSocket,
+  websocket,
 };
