@@ -1,0 +1,1 @@
+ALTER TABLE "trashbins" ADD COLUMN "is_scheduled" boolean DEFAULT false NOT NULL;

@@ -1,4 +1,10 @@
-import { boolean, numeric, pgTable, text } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  numeric,
+  pgTable,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { timestamps } from "../base";
 import type z from "zod/v4";
 import { createInsertSchema } from "drizzle-zod";
@@ -19,6 +25,8 @@ export const trashbinsTable = pgTable("trashbins", {
   isOperational: boolean("is_operational").notNull().default(false),
   isArchive: boolean("is_archive").notNull().default(false),
   isCollected: boolean("is_collected").notNull().default(false),
+  isScheduled: boolean("is_scheduled").notNull().default(false),
+  scheduledAt: timestamp("scheduled_at"),
   ...timestamps,
 });
 

@@ -1,0 +1,1 @@
+ALTER TABLE "trashbins" ADD COLUMN "scheduled_at" timestamp;

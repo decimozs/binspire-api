@@ -1,7 +1,4 @@
-import {
-  collectionsTable,
-
-} from "@/src/db";
+import { collectionsTable } from "@/src/db";
 import type { InsertCollection, UpdateCollection } from "@/src/db";
 import db from "@/src/lib/db";
 import { eq, inArray } from "drizzle-orm";

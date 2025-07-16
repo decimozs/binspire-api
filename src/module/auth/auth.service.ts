@@ -15,7 +15,6 @@ import { UserRepository } from "../user/user.repository";
 import { AccountRepository } from "../account/account.repository";
 import { permissionValues, roleValues } from "@/src/util/constant";
 import HistoryService from "../history/history.service";
-import { broadcastToAdmins, broadcastToCollectors } from "@/src/lib/websocket";
 
 export const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email format" }),
