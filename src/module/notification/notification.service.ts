@@ -1,13 +1,13 @@
 import { messaging } from "../../lib/firebase-admin";
 
 const deviceToken =
-  "eGr9rnKcphqpJI__jxgUfn:APA91bEu59V6Yj3RpbYREYicwZCozluH_RexZvh-TKm4V945SA8ihNAirFssmoHxjr4dIzxAkViEX-1zAz46zvX5kyCaHPryPwGs98H1Jw4UAbEEBGZtxvw";
+  "fw4msCWbreH140KjmZUzBh:APA91bGYw0EZ_WEPbBPZb7bycoFOQ4P25Cu2vA5U5JG0nb-xWcqHD19xuTXPZJZ5RWlP1Vt69R0pTPqUq1HF6j-3NhDPKTEuRfOdctcfXDCiakIVM5GZusM";
 
 await messaging.send({
   token: deviceToken,
   notification: {
-    title: "Trash Bin Full!",
-    body: "Click to view location on map.",
+    title: "Test Notification",
+    body: "Binspire Test Push Notifications",
   },
   webpush: {
     fcmOptions: {

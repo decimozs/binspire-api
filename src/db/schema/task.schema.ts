@@ -16,7 +16,9 @@ export const tasksTable = pgTable("tasks", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   status: text("status").notNull().default("pending"),
-  assignedTo: text("assigned_to").references(() => usersTable.id),
+  assignedTo: text("assigned_to").references(() => usersTable.id, {
+    onDelete: "cascade",
+  }),
   priority: text("priority").default("normal"),
   referenceId: text("reference_id").notNull(),
   scheduledAt: timestamp("scheduled_at").notNull(),

@@ -17,7 +17,9 @@ export const issuesTable = pgTable("issues", {
     .references(() => usersTable.id, { onDelete: "cascade" })
     .notNull(),
   title: text("title").notNull(),
-  assignedTo: text("assigned_to").references(() => usersTable.id),
+  assignedTo: text("assigned_to").references(() => usersTable.id, {
+    onDelete: "cascade",
+  }),
   description: text("description").notNull(),
   status: text("status").notNull().default("open"),
   category: text("category").notNull(),

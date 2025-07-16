@@ -120,6 +120,20 @@
       "when": 1752661210795,
       "tag": "0016_heavy_sasquatch",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1752676973739,
+      "tag": "0017_awesome_wolfsbane",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1752677074778,
+      "tag": "0018_striped_vermin",
+      "breakpoints": true
     }
   ]
 }
