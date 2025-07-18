@@ -36,7 +36,7 @@ async function seedBasedUser() {
 
   if (!org) throw new Error("Failed to seed org table");
 
-  const [user] = await db
+  const [adminUser] = await db
     .insert(usersTable)
     .values({
       orgId: org.id,
@@ -48,18 +48,41 @@ async function seedBasedUser() {
     })
     .returning();
 
-  if (!user) throw new Error("Failed to seed user table");
+  const [collectorUser] = await db
+    .insert(usersTable)
+    .values({
+      orgId: org.id,
+      name: "Collector",
+      email: "collector@gmail.com",
+      permission: "viewer",
+      role: "collector",
+      isOnline: false,
+    })
+    .returning();
 
-  const hashedPassword = await argon2.hash("admin12345");
+  if (!adminUser || !collectorUser)
+    throw new Error("Failed to seed user table");
 
-  await db.insert(accountsTable).values({
-    userId: user.id,
-    password: hashedPassword,
+  const adminPassword = await argon2.hash("admin12345");
+  const collectorPassword = await argon2.hash("collector12345");
+
+  const hashedAdminPassword = await db.insert(accountsTable).values({
+    userId: adminUser.id,
+    password: adminPassword,
   });
 
-  console.log("✅ Seeded one org, user, and account.");
+  const hashedCollectorPassword = await db.insert(accountsTable).values({
+    userId: collectorUser.id,
+    password: collectorPassword,
+  });
+
+  if (!hashedAdminPassword || !hashedCollectorPassword)
+    throw new Error("Failed to seed accounts table");
+
+  console.log("✅ Seeded org, user");
   console.log("org: ", org);
-  console.log("user: ", user);
+  console.log("admin user: ", adminUser);
+  console.log("collector user: ", collectorUser);
 }
 
 async function seedUsers() {
@@ -125,6 +148,8 @@ async function seedIssues() {
     "hardware",
     "software",
     "maintenance",
+    "trashbin",
+    "analytics",
   ] as const;
 
   const now = new Date();
@@ -154,7 +179,7 @@ async function seedIssues() {
       priority: priorities[Math.floor(Math.random() * priorities.length)],
       status,
       category: categories[Math.floor(Math.random() * categories.length)],
-      title: `Issue: ${Math.random().toString(36).substring(2, 8)}`,
+      title: faker.lorem.sentence(),
       description: "Auto-generated issue for testing.",
       createdAt,
       updatedAt,
@@ -203,7 +228,7 @@ async function seedCollections() {
   const userIds = users.map((user) => user.id);
   const trashbinIds = trashbins.map((bin) => bin.id);
 
-  const collections = Array.from({ length: 300 }).map(() => {
+  const collections = Array.from({ length: 100 }).map(() => {
     const wasteLevel = faker.number.int({ min: 0, max: 100 });
     const batteryLevel = faker.number.int({ min: 0, max: 100 });
 
@@ -222,7 +247,7 @@ async function seedCollections() {
 
   await db.insert(collectionsTable).values(collections);
 
-  console.log("✅ Seeded 300 collections");
+  console.log("✅ Seeded 100 collections");
 }
 
 async function seedActivity() {
@@ -237,7 +262,9 @@ async function seedActivity() {
     "history",
     "activity",
     "request-access",
+    "analytics",
   ];
+
   const actions = [
     "create",
     "update",
@@ -248,11 +275,26 @@ async function seedActivity() {
     "restore",
   ];
 
+  const pastTense = (action: string) => {
+    const irregular: Record<string, string> = {
+      reject: "rejected",
+      approve: "approved",
+      create: "created",
+      delete: "deleted",
+      update: "updated",
+    };
+    return irregular[action] || `${action}d`;
+  };
+
   const activitySeeds = Array.from({ length: 100 }).map(() => {
     const user = faker.helpers.arrayElement(users);
     const entity = faker.helpers.arrayElement(entities);
     const action = faker.helpers.arrayElement(actions);
-    const fakeChanges =
+
+    const actionPast = pastTense(action);
+    const description = `${actionPast.charAt(0).toUpperCase() + actionPast.slice(1)} a ${entity}`;
+
+    const changes =
       action === "update"
         ? {
             id: nanoid(),
@@ -261,17 +303,19 @@ async function seedActivity() {
           }
         : null;
 
+    const timestamp = faker.date.recent();
+
     return {
       orgId: user.orgId,
       actorId: user.id,
       referenceId: nanoid(),
       entity,
       action,
-      description: `${action}d a ${entity}`,
+      description,
       isArchive: faker.datatype.boolean(),
-      changes: fakeChanges,
-      createdAt: faker.date.recent(),
-      updatedAt: faker.date.recent(),
+      changes,
+      createdAt: timestamp,
+      updatedAt: timestamp,
     };
   });
 
@@ -341,7 +385,7 @@ async function seedTask() {
 
   await db.insert(tasksTable).values(tasks);
 
-  console.log("✅ Seeded 50 tasks");
+  console.log("✅ Seeded 100 tasks");
 }
 
 // await seedBasedUser();
@@ -350,7 +394,7 @@ async function seedTask() {
 // await seedIssues();
 // await seedCollections();
 // await seedHistory();
-// await seedActivity();
+await seedActivity();
 // await seedBasedUser();
 // await seedTask();
-await seedRequestAccess();
+//await seedRequestAccess();
