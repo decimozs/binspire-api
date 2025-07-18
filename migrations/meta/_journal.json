@@ -134,6 +134,13 @@
       "when": 1752677074778,
       "tag": "0018_striped_vermin",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1752835411942,
+      "tag": "0019_last_prodigy",
+      "breakpoints": true
     }
   ]
 }

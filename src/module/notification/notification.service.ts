@@ -1,17 +1,65 @@
-import { messaging } from "../../lib/firebase-admin";
+import NotificationRepository from "./notification.repository";
+import type { InsertNotification, UpdateNotification } from "@/src/db";
 
-const deviceToken =
-  "fw4msCWbreH140KjmZUzBh:APA91bGYw0EZ_WEPbBPZb7bycoFOQ4P25Cu2vA5U5JG0nb-xWcqHD19xuTXPZJZ5RWlP1Vt69R0pTPqUq1HF6j-3NhDPKTEuRfOdctcfXDCiakIVM5GZusM";
+async function findAll() {
+  return await NotificationRepository.findAll();
+}
 
-await messaging.send({
-  token: deviceToken,
-  notification: {
-    title: "Test Notification",
-    body: "Binspire Test Push Notifications",
-  },
-  webpush: {
-    fcmOptions: {
-      link: "https://yourapp.com/dashboard/map?id=bin123",
-    },
-  },
-});
+async function findById(id: string) {
+  return await NotificationRepository.findById(id);
+}
+
+async function findByFCMToken(token: string) {
+  return await NotificationRepository.findByFCMToken(token);
+}
+
+async function insert(data: InsertNotification) {
+  const notification = await NotificationRepository.findByFCMToken(
+    data.fcmToken,
+  );
+
+  if (notification) {
+    throw new Error(
+      `Notification with FCM token ${data.fcmToken} already exists`,
+    );
+  }
+
+  const [insertedNotifcation] = await NotificationRepository.insert(data);
+
+  if (!insertedNotifcation) {
+    throw new Error("Failed to insert notification");
+  }
+
+  return insertedNotifcation;
+}
+
+async function update(id: string, data: UpdateNotification) {
+  const [updatedNotification] = await NotificationRepository.update(id, data);
+
+  if (!updatedNotification) {
+    throw new Error(`Failed to update notification with id: ${id}`);
+  }
+
+  return updatedNotification;
+}
+
+async function remove(id: string) {
+  const [deletedNotification] = await NotificationRepository.remove(id);
+
+  if (!deletedNotification) {
+    throw new Error(`Failed to delete notification with id: ${id}`);
+  }
+
+  return deletedNotification;
+}
+
+const NotificationService = {
+  findAll,
+  findById,
+  insert,
+  update,
+  remove,
+  findByFCMToken,
+};
+
+export default NotificationService;
