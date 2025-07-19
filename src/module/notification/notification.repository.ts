@@ -1,8 +1,8 @@
 import {
   notificationTable,
-  type InsertNotification,
-  type UpdateNotification,
+
 } from "@/src/db";
+import type { InsertNotification, UpdateNotification } from "@/src/db";
 import db from "@/src/lib/db";
 import { eq } from "drizzle-orm";
 

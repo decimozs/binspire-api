@@ -1,14 +1,17 @@
 import { pgTable, text } from "drizzle-orm/pg-core";
 import { insertExcludedFields, timestamps } from "../base";
-import { orgsTable } from "./org.schema";
 import { nanoid } from "nanoid";
 import { createInsertSchema } from "drizzle-zod";
 import type z from "zod/v4";
+import { usersTable } from "./user.schema";
 
 export const notificationTable = pgTable("notifications", {
   id: text("id")
     .$defaultFn(() => nanoid())
     .primaryKey(),
+  userId: text("user_id")
+    .references(() => usersTable.id, { onDelete: "cascade" })
+    .notNull(),
   fcmToken: text("fcm_token").notNull(),
   ...timestamps,
 });
