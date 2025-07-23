@@ -6,7 +6,6 @@ import {
   collectionsTable,
   historyTable,
   issuesTable,
-  orgsTable,
   requestsAccessTable,
   tasksTable,
   trashbinsTable,
@@ -26,20 +25,10 @@ if (!testOrg) throw new Error("Failed to seed. Test org not found");
 const ORG_ID = testOrg.id;
 
 async function seedBasedUser() {
-  const [org] = await db
-    .insert(orgsTable)
-    .values({
-      name: "test-org",
-      slug: "test_org",
-    })
-    .returning();
-
-  if (!org) throw new Error("Failed to seed org table");
-
   const [adminUser] = await db
     .insert(usersTable)
     .values({
-      orgId: org.id,
+      orgId: ORG_ID,
       name: "Admin",
       email: "admin@gmail.com",
       permission: "superuser",
@@ -51,7 +40,7 @@ async function seedBasedUser() {
   const [collectorUser] = await db
     .insert(usersTable)
     .values({
-      orgId: org.id,
+      orgId: ORG_ID,
       name: "Collector",
       email: "collector@gmail.com",
       permission: "viewer",
@@ -79,8 +68,6 @@ async function seedBasedUser() {
   if (!hashedAdminPassword || !hashedCollectorPassword)
     throw new Error("Failed to seed accounts table");
 
-  console.log("✅ Seeded org, user");
-  console.log("org: ", org);
   console.log("admin user: ", adminUser);
   console.log("collector user: ", collectorUser);
 }
@@ -154,7 +141,7 @@ async function seedIssues() {
 
   const now = new Date();
 
-  const issues = Array.from({ length: 100 }).map(() => {
+  const issues = Array.from({ length: 500 }).map(() => {
     const status = statuses[Math.floor(Math.random() * statuses.length)];
 
     const createdAt = new Date(
@@ -228,7 +215,7 @@ async function seedCollections() {
   const userIds = users.map((user) => user.id);
   const trashbinIds = trashbins.map((bin) => bin.id);
 
-  const collections = Array.from({ length: 100 }).map(() => {
+  const collections = Array.from({ length: 500 }).map(() => {
     const wasteLevel = faker.number.int({ min: 0, max: 100 });
     const batteryLevel = faker.number.int({ min: 0, max: 100 });
 
@@ -286,7 +273,7 @@ async function seedActivity() {
     return irregular[action] || `${action}d`;
   };
 
-  const activitySeeds = Array.from({ length: 100 }).map(() => {
+  const activitySeeds = Array.from({ length: 500 }).map(() => {
     const user = faker.helpers.arrayElement(users);
     const entity = faker.helpers.arrayElement(entities);
     const action = faker.helpers.arrayElement(actions);
@@ -336,7 +323,7 @@ async function seedHistory() {
   ];
   const entities = ["auth", "user", "collector", "verification"];
 
-  const historySeeds = Array.from({ length: 100 }).map(() => {
+  const historySeeds = Array.from({ length: 500 }).map(() => {
     const user = faker.helpers.arrayElement(users);
     const entity = faker.helpers.arrayElement(entities);
     const action = faker.helpers.arrayElement(sessionActions);
@@ -394,7 +381,7 @@ async function seedTask() {
 // await seedIssues();
 // await seedCollections();
 // await seedHistory();
-await seedActivity();
+// await seedActivity();
 // await seedBasedUser();
 // await seedTask();
-//await seedRequestAccess();
+// await seedRequestAccess();

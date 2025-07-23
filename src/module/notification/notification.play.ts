@@ -1,7 +1,7 @@
 import { messaging } from "../../lib/firebase-admin";
 
 const deviceTokens =
-  "fw4msCWbreH140KjmZUzBh:APA91bGYw0EZ_WEPbBPZb7bycoFOQ4P25Cu2vA5U5JG0nb-xWcqHD19xuTXPZJZ5RWlP1Vt69R0pTPqUq1HF6j-3NhDPKTEuRfOdctcfXDCiakIVM5GZusM";
+  "dQBW767EtZBKaylUTGYY_a:APA91bH3bZIY_rJtJWIoYDa6tXLJ655Vy_JMq0fo09GNxHeZrWBpNMTaOaSOaxeof1wXl6nFIw36GVawY7o4y_QmCX5XQGeWWO4BcqcnMgSsYRjA9cUQbDI";
 
 await messaging.send({
   token: deviceTokens,
