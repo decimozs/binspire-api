@@ -44,6 +44,7 @@ function initApp() {
         "/notifications",
         "/api/v1/ws/admin",
         "/api/v1/ws/collector",
+        "/api/v1/auth/*",
       ],
       orgMiddleware,
     ),
