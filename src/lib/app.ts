@@ -45,6 +45,8 @@ function initApp() {
         "/api/v1/ws/admin",
         "/api/v1/ws/collector",
         "/api/v1/auth/*",
+        "/api/v1/emails/*",
+        "/api/v1/requests-access/*",
       ],
       orgMiddleware,
     ),
