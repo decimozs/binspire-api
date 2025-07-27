@@ -3,8 +3,10 @@ import type { InsertCollection, UpdateCollection } from "@/src/db";
 import db from "@/src/lib/db";
 import { eq, inArray } from "drizzle-orm";
 
-async function findAll() {
-  return await db.query.collectionsTable.findMany();
+async function findAll(orgId: string) {
+  return await db.query.collectionsTable.findMany({
+    where: (table, { eq }) => eq(table.orgId, orgId),
+  });
 }
 
 async function findById(id: string) {

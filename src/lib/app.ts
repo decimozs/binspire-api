@@ -21,6 +21,7 @@ import taskRoute from "../module/task/task.route";
 import directionRoute from "../module/direction/direction.route";
 import { adminWsRoute, collectorWsRoute } from "./websocket";
 import notificationRoute from "../module/notification/notification.route";
+import orgRoute from "../module/org/org.route";
 
 function initApp() {
   const app = new Hono<AppBindings>({ strict: false });
@@ -104,6 +105,7 @@ const routes = [
   adminWsRoute,
   collectorWsRoute,
   notificationRoute,
+  orgRoute,
 ] as const;
 
 routes.forEach((route) => {

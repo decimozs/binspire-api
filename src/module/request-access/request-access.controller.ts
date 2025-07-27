@@ -11,7 +11,8 @@ export const EmailParamsSchema = z.object({
 });
 
 const getAllHandler = factory.createHandlers(async (c) => {
-  const data = await RequestAccessService.getAll();
+  const orgId = c.get("orgId");
+  const data = await RequestAccessService.getAll(orgId);
   return successfulResponse(c, "Successfully get request access data", data);
 });
 

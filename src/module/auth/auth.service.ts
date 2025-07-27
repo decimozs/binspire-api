@@ -95,6 +95,7 @@ export async function login(payload: LoginPayload) {
       role,
       name: user.name,
       permission,
+      orgId,
     },
   };
 }

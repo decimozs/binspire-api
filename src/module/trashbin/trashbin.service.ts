@@ -3,8 +3,12 @@ import TrashbinRepository from "./trashbin.repository";
 import type { InsertTrashbin, UpdateTrashbin } from "@/src/db";
 import ActivityService from "../actvity/activity.service";
 
-async function getAll() {
-  return await TrashbinRepository.findAll();
+async function getAll(orgId: string) {
+  if (!orgId) {
+    throw new Error("Organization ID is required to fetch trashbins");
+  }
+
+  return await TrashbinRepository.findAll(orgId);
 }
 
 async function getById(id: string) {

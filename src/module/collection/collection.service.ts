@@ -3,8 +3,12 @@ import CollectionRepository from "./collection.repository";
 import type { InsertCollection, UpdateCollection } from "@/src/db";
 import ActivityService from "../actvity/activity.service";
 
-async function getAll() {
-  return await CollectionRepository.findAll();
+async function getAll(orgId: string) {
+  if (!orgId) {
+    throw new Error("Organization ID is required to fetch collections");
+  }
+
+  return await CollectionRepository.findAll(orgId);
 }
 
 async function getById(id: string) {

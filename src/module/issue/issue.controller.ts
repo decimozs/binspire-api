@@ -8,7 +8,8 @@ import { BatchIdSchema } from "../request-access/request-access.controller";
 import { zValidator } from "@/src/util/validator";
 
 const getAllHandler = factory.createHandlers(async (c) => {
-  const data = await IssueService.getAll();
+  const orgId = c.get("orgId");
+  const data = await IssueService.getAll(orgId);
   return successfulResponse(c, "Successfully retrieved issues", data);
 });
 

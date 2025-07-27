@@ -24,6 +24,8 @@ if (!testOrg) throw new Error("Failed to seed. Test org not found");
 
 const ORG_ID = testOrg.id;
 
+const globalSeedSize = 300;
+
 async function seedBasedUser() {
   const [adminUser] = await db
     .insert(usersTable)
@@ -73,7 +75,8 @@ async function seedBasedUser() {
 }
 
 async function seedUsers() {
-  const users = Array.from({ length: 100 }, () => {
+  const userSeedSize = 50;
+  const users = Array.from({ length: userSeedSize }, () => {
     return {
       orgId: ORG_ID,
       name: faker.person.fullName(),
@@ -84,7 +87,7 @@ async function seedUsers() {
     };
   });
 
-  const hashedPassword = await argon2.hash("admin12345");
+  const hashedPassword = await argon2.hash("user12345");
 
   try {
     const insertedUsers = await db.insert(usersTable).values(users).returning();
@@ -96,7 +99,7 @@ async function seedUsers() {
 
     await db.insert(accountsTable).values(accountsToInsert);
 
-    console.log("✅ Seeded 100 users and accounts.");
+    console.log(`Seeded ${userSeedSize} users.`);
     process.exit(0);
   } catch (error) {
     console.error("Failed to seed users: ", error);
@@ -105,19 +108,22 @@ async function seedUsers() {
 }
 
 async function seedRequestAccess() {
-  const seedData = Array.from({ length: 100 }, (): InsertRequestAccess => {
-    return {
-      role: faker.helpers.arrayElement(roleValues),
-      name: faker.person.fullName(),
-      orgId: ORG_ID,
-      reason: faker.lorem.sentence(),
-      email: faker.internet.email(),
-    };
-  });
+  const seedData = Array.from(
+    { length: globalSeedSize },
+    (): InsertRequestAccess => {
+      return {
+        role: faker.helpers.arrayElement(roleValues),
+        name: faker.person.fullName(),
+        orgId: ORG_ID,
+        reason: faker.lorem.sentence(),
+        email: faker.internet.email(),
+      };
+    },
+  );
 
   try {
     await db.insert(requestsAccessTable).values(seedData);
-    console.log("✅ Seeded requests acceess.");
+    console.log(`Seeded ${globalSeedSize} request access records`);
     process.exit(0);
   } catch (error) {
     console.error("Failed to seed request access data: ", error);
@@ -141,7 +147,7 @@ async function seedIssues() {
 
   const now = new Date();
 
-  const issues = Array.from({ length: 500 }).map(() => {
+  const issues = Array.from({ length: globalSeedSize }).map(() => {
     const status = statuses[Math.floor(Math.random() * statuses.length)];
 
     const createdAt = new Date(
@@ -158,16 +164,18 @@ async function seedIssues() {
 
     return {
       orgId: ORG_ID,
-      reporterId: userIds[Math.floor(Math.random() * userIds.length)],
+      reporterId: userIds[Math.floor(Math.random() * userIds.length)] as string,
       assignedTo:
         Math.random() < 0.2
           ? null
           : userIds[Math.floor(Math.random() * userIds.length)],
       priority: priorities[Math.floor(Math.random() * priorities.length)],
       status,
-      category: categories[Math.floor(Math.random() * categories.length)],
+      category: categories[
+        Math.floor(Math.random() * categories.length)
+      ] as string,
       title: faker.lorem.sentence(),
-      description: "Auto-generated issue for testing.",
+      description: faker.lorem.paragraph(),
       createdAt,
       updatedAt,
     };
@@ -175,7 +183,7 @@ async function seedIssues() {
 
   await db.insert(issuesTable).values(issues);
 
-  console.log("✅ Seeded 100 issues with varying resolution times");
+  console.log(`Seeded ${globalSeedSize} issues with random data`);
 }
 
 async function seedTrashbins() {
@@ -203,7 +211,7 @@ async function seedTrashbins() {
 
   await db.insert(trashbinsTable).values(trashbins);
 
-  console.log("✅ Seeded 10 trashbins with fixed lat/lng");
+  console.log("Seeded 10 trashbins with fixed lat/lng");
 }
 
 async function seedCollections() {
@@ -215,11 +223,12 @@ async function seedCollections() {
   const userIds = users.map((user) => user.id);
   const trashbinIds = trashbins.map((bin) => bin.id);
 
-  const collections = Array.from({ length: 500 }).map(() => {
+  const collections = Array.from({ length: globalSeedSize }).map(() => {
     const wasteLevel = faker.number.int({ min: 0, max: 100 });
     const batteryLevel = faker.number.int({ min: 0, max: 100 });
 
     return {
+      orgId: ORG_ID,
       id: nanoid(),
       trashbinId: faker.helpers.arrayElement(trashbinIds),
       collectedBy: faker.helpers.arrayElement(userIds),
@@ -234,7 +243,7 @@ async function seedCollections() {
 
   await db.insert(collectionsTable).values(collections);
 
-  console.log("✅ Seeded 100 collections");
+  console.log(`Seeded ${globalSeedSize} collections with random data`);
 }
 
 async function seedActivity() {
@@ -273,7 +282,7 @@ async function seedActivity() {
     return irregular[action] || `${action}d`;
   };
 
-  const activitySeeds = Array.from({ length: 500 }).map(() => {
+  const activitySeeds = Array.from({ length: globalSeedSize }).map(() => {
     const user = faker.helpers.arrayElement(users);
     const entity = faker.helpers.arrayElement(entities);
     const action = faker.helpers.arrayElement(actions);
@@ -308,7 +317,7 @@ async function seedActivity() {
 
   await db.insert(activityTable).values(activitySeeds);
 
-  console.log("✅ Seeded 100 Activity logs using real user IDs");
+  console.log(`Seeded ${globalSeedSize} activity logs using real user IDs`);
 }
 
 async function seedHistory() {
@@ -323,7 +332,7 @@ async function seedHistory() {
   ];
   const entities = ["auth", "user", "collector", "verification"];
 
-  const historySeeds = Array.from({ length: 500 }).map(() => {
+  const historySeeds = Array.from({ length: globalSeedSize }).map(() => {
     const user = faker.helpers.arrayElement(users);
     const entity = faker.helpers.arrayElement(entities);
     const action = faker.helpers.arrayElement(sessionActions);
@@ -343,7 +352,7 @@ async function seedHistory() {
 
   await db.insert(historyTable).values(historySeeds);
 
-  console.log("✅ Seeded 100 History logs using real user IDs");
+  console.log(`Seeded ${globalSeedSize} history logs using real user IDs`);
 }
 
 async function seedTask() {
@@ -356,7 +365,7 @@ async function seedTask() {
   const issueIds = issues.map((issue) => issue.id);
   const referenceIds = [...trashbinIds, ...issueIds];
 
-  const tasks = Array.from({ length: 50 }).map(() => {
+  const tasks = Array.from({ length: 100 }).map(() => {
     return {
       orgId: ORG_ID,
       title: faker.lorem.sentence(),
@@ -372,16 +381,29 @@ async function seedTask() {
 
   await db.insert(tasksTable).values(tasks);
 
-  console.log("✅ Seeded 100 tasks");
+  console.log("Seeded 100 tasks");
+}
+
+async function resetTables() {
+  await db.delete(activityTable);
+  await db.delete(collectionsTable);
+  await db.delete(historyTable);
+  await db.delete(issuesTable);
+  await db.delete(requestsAccessTable);
+  await db.delete(tasksTable);
+  console.log(
+    "Reset all tables except usersTable, accountsTable and trashbinsTable",
+  );
 }
 
 // await seedBasedUser();
 // await seedUsers();
 // await seedTrashbins();
 // await seedIssues();
-// await seedCollections();
+await seedCollections();
 // await seedHistory();
 // await seedActivity();
 // await seedBasedUser();
 // await seedTask();
 // await seedRequestAccess();
+// await resetTables();

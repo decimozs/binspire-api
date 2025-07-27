@@ -14,8 +14,12 @@ import { VerificationRepository } from "../verification/verification.repository"
 import type { BatchUpdatePayload } from "@/src/lib/types";
 import ActivityService from "../actvity/activity.service";
 
-async function getAll() {
-  return await RequestAccessRepository.findAll();
+async function getAll(orgId: string) {
+  if (!orgId) {
+    throw new Error("Organization ID is required to fetch request accesses");
+  }
+
+  return await RequestAccessRepository.findAll(orgId);
 }
 
 async function getById(id: string) {

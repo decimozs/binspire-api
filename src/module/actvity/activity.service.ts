@@ -1,8 +1,12 @@
 import type { InsertActivity, UpdateActivity } from "@/src/db";
 import ActivityRepository from "./activity.repository";
 
-async function getAll() {
-  return await ActivityRepository.findAll();
+async function getAll(orgId: string) {
+  if (!orgId) {
+    throw new Error("Organization ID is required to fetch activities");
+  }
+
+  return await ActivityRepository.findAll(orgId);
 }
 
 async function getById(id: string) {

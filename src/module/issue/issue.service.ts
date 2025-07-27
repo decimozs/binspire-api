@@ -3,8 +3,12 @@ import type { InsertIssue, UpdateIssue } from "@/src/db";
 import type { BatchUpdatePayload } from "@/src/lib/types";
 import ActivityService from "../actvity/activity.service";
 
-async function getAll() {
-  return await IssueRepository.findAll();
+async function getAll(orgId: string) {
+  if (!orgId) {
+    throw new Error("Organization ID is required to fetch issues");
+  }
+
+  return await IssueRepository.findAll(orgId);
 }
 
 async function getById(id: string) {

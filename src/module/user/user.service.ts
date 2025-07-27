@@ -4,8 +4,12 @@ import { NotFoundError } from "@/src/util/error";
 import type { BatchUpdatePayload } from "@/src/lib/types";
 import ActivityService from "../actvity/activity.service";
 
-async function getAll() {
-  return await UserRepository.findAll();
+async function getAll(orgId: string) {
+  if (!orgId) {
+    throw new NotFoundError("Organization ID is required to fetch users");
+  }
+
+  return await UserRepository.findAll(orgId);
 }
 
 async function getById(id: string) {

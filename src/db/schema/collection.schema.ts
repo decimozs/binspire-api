@@ -5,11 +5,15 @@ import { createInsertSchema } from "drizzle-zod";
 import { trashbinsTable } from "./trashbin.schema";
 import { nanoid } from "nanoid";
 import { usersTable } from "./user.schema";
+import { orgsTable } from "./org.schema";
 
 export const collectionsTable = pgTable("collections", {
   id: text("id")
     .$defaultFn(() => nanoid())
     .primaryKey(),
+  orgId: text("org_id")
+    .references(() => orgsTable.id, { onDelete: "cascade" })
+    .notNull(),
   trashbinId: text("trashbin_id")
     .references(() => trashbinsTable.id, { onDelete: "cascade" })
     .notNull(),

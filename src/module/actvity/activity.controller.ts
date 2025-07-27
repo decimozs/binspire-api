@@ -7,7 +7,8 @@ import { insertActivitySchema, updateActivitySchema } from "@/src/db";
 import { BatchIdSchema } from "../request-access/request-access.controller";
 
 const getAllHandler = factory.createHandlers(async (c) => {
-  const data = await ActivityService.getAll();
+  const orgId = c.get("orgId");
+  const data = await ActivityService.getAll(orgId);
   return successfulResponse(c, "Successfully retrieved activities", data);
 });
 

@@ -3,8 +3,9 @@ import type { InsertRequestAccess, UpdateRequestAccess } from "@/src/db";
 import db from "@/src/lib/db";
 import { eq, inArray } from "drizzle-orm";
 
-async function findAll() {
+async function findAll(orgId: string) {
   return await db.query.requestsAccessTable.findMany({
+    where: (table, { eq }) => eq(table.orgId, orgId),
     orderBy: (table, { desc }) => [desc(table.createdAt)],
   });
 }

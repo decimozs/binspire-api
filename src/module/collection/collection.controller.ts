@@ -8,7 +8,8 @@ import { BatchIdSchema } from "../request-access/request-access.controller";
 import CollectionService from "./collection.service";
 
 const getAllHandler = factory.createHandlers(async (c) => {
-  const data = await CollectionService.getAll();
+  const orgId = c.get("orgId");
+  const data = await CollectionService.getAll(orgId);
   return successfulResponse(c, "Successfully retrieved collections", data);
 });
 

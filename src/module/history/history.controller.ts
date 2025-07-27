@@ -8,7 +8,8 @@ import HistoryService from "./history.service";
 import z from "zod/v4";
 
 const getAllHandler = factory.createHandlers(async (c) => {
-  const data = await HistoryService.getAll();
+  const orgId = c.get("orgId");
+  const data = await HistoryService.getAll(orgId);
   return successfulResponse(c, "Successfully retrieved histories", data);
 });
 
