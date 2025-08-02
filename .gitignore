@@ -1,6 +1,44 @@
-# deps
+# Dependencies
 node_modules/
+
+# Build output
 build/
 build
-dist 
 dist/
+dist
+
+# Environment files
+.env
+.env.development
+.env.production
+.env.*  # Catch-all for other envs like .env.staging, .env.test, etc.
+
+# API certificates (do NOT push certs)
+certs/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dev output
+dev-dist/
+
+# Local override files
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
