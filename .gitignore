@@ -42,3 +42,5 @@ dev-dist/
 *.sln
 *.sw?
 
+
+service-account.json
